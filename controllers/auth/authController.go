@@ -1,15 +1,16 @@
 package auth
 
-import (
+import ( 
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
 	"kgermando/i-pos-restaurant-api/database"
 	"kgermando/i-pos-restaurant-api/models"
 	"kgermando/i-pos-restaurant-api/utils"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 var SECRET_KEY string = os.Getenv("SECRET_KEY")
@@ -98,7 +99,7 @@ func Login(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"message": "Mot de passe incorrect! 😰",
 		})
-	}
+	} 
 
 	if !u.Entreprise.Status {
 		c.Status(400)
@@ -126,7 +127,7 @@ func Login(c *fiber.Ctx) error {
 		Secure:   true,
 		HTTPOnly: true,
 		SameSite: "none",
-		Domain:   ".railway.app", // "192.168.0.8",
+		Domain:  "localhost", //  ".railway.app",
 		Path:     "/",
 	}
 
