@@ -84,26 +84,33 @@ func Login(c *fiber.Ctx) error {
 
 	u := &models.User{}
 
-	database.DB.Where("email = ?", lu.Email).First(&u)
+	database.DB.Where("email = ?", lu.Email).Preload("Entreprise").First(&u)
 
 	if u.ID == 0 {
 		c.Status(404)
 		return c.JSON(fiber.Map{
-			"message": "invalid email 😰",
+			"message": "Invalid email 😰",
 		})
 	}
 
 	if err := u.ComparePassword(lu.Password); err != nil {
 		c.Status(400)
 		return c.JSON(fiber.Map{
-			"message": "mot de passe incorrect! 😰",
+			"message": "Mot de passe incorrect! 😰",
+		})
+	}
+
+	if !u.Entreprise.Status {
+		c.Status(400)
+		return c.JSON(fiber.Map{
+			"message": "Structure non autorisée 😰",
 		})
 	}
 
 	if !u.Status {
 		c.Status(400)
 		return c.JSON(fiber.Map{
-			"message": "vous n'êtes pas autorisé de se connecter 😰",
+			"message": "Vous n'êtes pas autorisé de se connecter 😰",
 		})
 	}
 
