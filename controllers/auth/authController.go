@@ -127,7 +127,7 @@ func Login(c *fiber.Ctx) error {
 		Secure:   true,
 		HTTPOnly: true,
 		SameSite: "none",
-		Domain:  "localhost", //  ".railway.app",
+		Domain: ".railway.app", //  "localhost", 
 		Path:     "/",
 	}
 
