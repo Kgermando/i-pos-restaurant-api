@@ -31,10 +31,10 @@ func GetPaginatedTableBoxEntreprise(c *fiber.Ctx) error {
 	var length int64
 	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).Count(&length)
 	db.Where("code_entreprise = ?", codeEntreprise).
-		Where("name ILIKE ? OR numero ILIKE ?", "%"+search+"%", "%"+search+"%").
+		Where("name ILIKE ? OR numero::TEXT ILIKE ?", "%"+search+"%", "%"+search+"%").
 		Offset(offset).
 		Limit(limit).
-		Order("table_box.updated_at DESC").
+		Order("table_boxes.updated_at DESC").
 		Preload("Commandes").
 		Find(&dataList)
 
@@ -57,7 +57,7 @@ func GetPaginatedTableBoxEntreprise(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"status":     "success",
-		"message":    "All commandes",
+		"message":    "All table_boxes",
 		"data":       dataList,
 		"pagination": pagination,
 	})
@@ -88,10 +88,10 @@ func GetPaginatedTableBox(c *fiber.Ctx) error {
 	Where("pos_id = ?", posId).Count(&length)
 	db.Where("code_entreprise = ?", codeEntreprise).
 		Where("pos_id = ?", posId).
-		Where("name ILIKE ? OR numero ILIKE ?", "%"+search+"%", "%"+search+"%").
+		Where("name ILIKE ? OR numero::TEXT ILIKE ?", "%"+search+"%", "%"+search+"%").
 		Offset(offset).
 		Limit(limit).
-		Order("table_box.updated_at DESC").
+		Order("table_boxes.updated_at DESC").
 		Preload("Commandes").
 		Find(&dataList)
  
@@ -114,7 +114,7 @@ func GetPaginatedTableBox(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"status":     "success",
-		"message":    "All commandes",
+		"message":    "All table_boxes",
 		"data":       dataList,
 		"pagination": pagination,
 	})
@@ -129,7 +129,7 @@ func GetAllTableBox(c *fiber.Ctx) error {
 	db.Where("code_entreprise = ?", codeEntreprise).Preload("Commandes").Find(&data)
 	return c.JSON(fiber.Map{
 		"status":  "success",
-		"message": "All tableBox",
+		"message": "All table_boxes",
 		"data":    data,
 	})
 }

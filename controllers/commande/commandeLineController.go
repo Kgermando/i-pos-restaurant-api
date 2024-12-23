@@ -87,25 +87,8 @@ func GetAllCommandeLineById(c *fiber.Ctx) error {
 		Order("commande_lines.updated_at DESC").
 		Preload("Commande").
 		Preload("Product").
-		Find(&dataList)
-
-		// db.Joins("JOIN commandes ON commande_lines.commande_id=commandes.id").
-		// Joins("JOIN products ON commande_lines.product_id=products.id").
-		// Where("commande_lines.commande_id = ?", commandeID).
-		// Select(`
-		// 	commande_lines.id AS id,
-		// 	products.reference AS reference,
-		// 	products.name AS name,
-		// 	products.description AS description,
-		// 	products.unite_vente AS unite_vente,
-		// 	commande_lines.quantity AS quantity,
-		// 	products.prix_vente AS prix_vente,
-		// 	products.tva AS tva
-		// `).
-		// Order("commande_lines.updated_at DESC").
-		// Preload("Commande").
-		// Preload("Product").
-		// Find(&dataList)
+		Preload("Plat").
+		Find(&dataList) 
 	return c.JSON(fiber.Map{
 		"status":  "success",
 		"message": "All commande lines",
@@ -133,7 +116,10 @@ func GetTotalCommandeLine(c *fiber.Ctx) error {
 	var data []models.CommandeLine
 	var totalQty int64
 
-	db.Model(data).Where("product_id = ?", productId).Select("SUM(quantity)").Scan(&totalQty)
+	if productId != "0" {
+		db.Model(data).Where("product_id = ?", productId).Select("SUM(quantity)").Scan(&totalQty)
+	}
+	
 
 	return c.JSON(fiber.Map{
 		"status":  "success",
@@ -237,7 +223,7 @@ func DeleteCommandeLine(c *fiber.Ctx) error {
 
 	var commandeLine models.CommandeLine
 	db.First(&commandeLine, id)
-	if commandeLine.ProductID == 0 {
+	if commandeLine.ProductID == 0 && commandeLine.PlatID == 0 {
 		return c.Status(404).JSON(
 			fiber.Map{
 				"status":  "error",

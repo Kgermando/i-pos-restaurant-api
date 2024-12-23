@@ -10,6 +10,7 @@ import (
 	"kgermando/i-pos-restaurant-api/controllers/pos"
 	"kgermando/i-pos-restaurant-api/controllers/productplat"
 	"kgermando/i-pos-restaurant-api/controllers/stock"
+	"kgermando/i-pos-restaurant-api/controllers/tablebox"
 	"kgermando/i-pos-restaurant-api/controllers/users"
 	"kgermando/i-pos-restaurant-api/middlewares"
 
@@ -68,7 +69,15 @@ func Setup(app *fiber.App) {
 	p.Put("/update/:id", pos.UpdatePos)
 	p.Delete("/delete/:id", pos.DeletePos)
 
-	
+	// Table Box controller
+	tb := api.Group("/table-box")
+	tb.Get("/:code_entreprise/all/paginate", tablebox.GetPaginatedTableBoxEntreprise)
+	tb.Get("/:code_entreprise/:pos_id/all/paginate", tablebox.GetPaginatedTableBox)
+	tb.Get("/:code_entreprise/:pos_id/all", tablebox.GetAllTableBox)
+	tb.Get("/get/:id", tablebox.GetTableBox)
+	tb.Post("/create", tablebox.CreateTableBox)
+	tb.Put("/update/:id", tablebox.UpdateTableBox)
+	tb.Delete("/delete/:id", tablebox.DeleteTableBox)
 
 	// Product controller
 	pr := api.Group("/products")
@@ -107,7 +116,7 @@ func Setup(app *fiber.App) {
 	cmd := api.Group("/commandes")
 	cmd.Get("/:code_entreprise/all/paginate", commande.GetPaginatedCommandeEntreprise)
 	cmd.Get("/:code_entreprise/:pos_id/all", commande.GetAllCommandes)
-	cmd.Get("/:code_entreprise/:pos_id/all/paginate", commande.GetPaginatedCommande)
+	cmd.Get("/:code_entreprise/:pos_id/:table_box_id/all/paginate", commande.GetPaginatedCommandeByTableBox)
 	cmd.Get("/get/:id", commande.GetCommande)
 	cmd.Post("/create", commande.CreateCommande)
 	cmd.Put("/update/:id", commande.UpdateCommande)
@@ -116,7 +125,7 @@ func Setup(app *fiber.App) {
 	// Commande line controller
 	cmdl := api.Group("/commandes-lines")
 	cmdl.Get("/all", commande.GetAllCommandeLines)
-	cmdl.Get("/all/:commande_id", commande.GetAllCommandeLineById) 
+	cmdl.Get("/all/:commande_id", commande.GetAllCommandeLineById)
 	cmdl.Get("/all/paginate/:commande_id", commande.GetPaginatedCommandeLineByID)
 	cmdl.Get("/all/total/:product_id", commande.GetTotalCommandeLine)
 	cmdl.Get("/get/:id", commande.GetCommandeLine)
@@ -125,13 +134,13 @@ func Setup(app *fiber.App) {
 	cmdl.Delete("/delete/:id", commande.DeleteCommandeLine)
 
 	// Client controller
-	cl := api.Group("/clients") 
+	cl := api.Group("/clients")
 	cl.Get("/:code_entreprise/all", fournisseurclient.GetAllClients)
 	cl.Get("/:code_entreprise/all/paginate", fournisseurclient.GetPaginatedClient)
 	cl.Get("/get/:id", fournisseurclient.GetClient)
 	cl.Post("/create", fournisseurclient.CreateClient)
 	cl.Put("/update/:id", fournisseurclient.UpdateClient)
-	cl.Delete("/delete/:id", fournisseurclient.DeleteClient) 
+	cl.Delete("/delete/:id", fournisseurclient.DeleteClient)
 
 	// Fournisseur controller
 	fs := api.Group("/fournisseurs")
@@ -151,7 +160,6 @@ func Setup(app *fiber.App) {
 	ctc.Put("/update/:id", contact.UpdateContact)
 	ctc.Delete("/delete/:id", contact.DeleteContact)
 
-
 	// Dashboard controller
 	dash := api.Group("/dashboard")
 	dash.Get("/:code_entreprise/all/stocks", dashboard.GetPaginatedStock)
@@ -163,5 +171,4 @@ func Setup(app *fiber.App) {
 	dash.Get("/:code_entreprise/all/total-stock-dispo-sortie", dashboard.GetTotalStockDispoSortie)
 	dash.Get("/:code_entreprise/all/total-valeur-products", dashboard.GetTotalValeurProduct)
 
-	
 }

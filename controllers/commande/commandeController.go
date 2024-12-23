@@ -31,7 +31,7 @@ func GetPaginatedCommandeEntreprise(c *fiber.Ctx) error {
 	var length int64
 	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).Count(&length)
 	db.Where("code_entreprise = ?", codeEntreprise). 
-		Where("ncommande::text ILIKE ? OR status ILIKE ?", "%"+search+"%", "%"+search+"%").
+		Where("ncommande::TEXT ILIKE ? OR status ILIKE ?", "%"+search+"%", "%"+search+"%").
 		Offset(offset).
 		Limit(limit).
 		Order("commandes.updated_at DESC").
@@ -65,10 +65,11 @@ func GetPaginatedCommandeEntreprise(c *fiber.Ctx) error {
 }
 
 // Paginate
-func GetPaginatedCommande(c *fiber.Ctx) error {
+func GetPaginatedCommandeByTableBox(c *fiber.Ctx) error {
 	db := database.DB
 	codeEntreprise := c.Params("code_entreprise")
 	posId := c.Params("pos_id")
+	tableBoxId := c.Params("table_box_id")
 
 	page, err := strconv.Atoi(c.Query("page", "1"))
 	if err != nil || page <= 0 {
@@ -86,10 +87,11 @@ func GetPaginatedCommande(c *fiber.Ctx) error {
 
 	var length int64
 	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).
-	Where("pos_id = ?", posId).Count(&length)
+	Where("pos_id = ?", posId).Where("table_box_id = ?", tableBoxId).Count(&length)
 	db.Where("code_entreprise = ?", codeEntreprise).
 		Where("pos_id = ?", posId).
-		Where("ncommande ILIKE ?", "%"+search+"%").
+		Where("table_box_id = ?", tableBoxId).
+		Where("ncommande::TEXT ILIKE ?", "%"+search+"%").
 		Offset(offset).
 		Limit(limit).
 		Order("commandes.updated_at DESC").

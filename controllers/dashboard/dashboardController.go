@@ -35,17 +35,7 @@ func GetPaginatedStock(c *fiber.Ctx) error {
 	endDateStr := c.Query("end_date")
 
 	fmt.Println("startDateStr", startDateStr)
-	fmt.Println("endDateStr", endDateStr)
-
-	// startDate, err := time.Parse("2006-01-02", startDateStr)
-	// if err != nil {
-	//     return c.Status(400).SendString("Invalid start date format")
-	// }
-
-	// endDate, err := time.Parse("2006-01-02", endDateStr)
-	// if err != nil {
-	//     return c.Status(400).SendString("Invalid end date format")
-	// }
+	fmt.Println("endDateStr", endDateStr) 
 
 	page, err := strconv.Atoi(c.Query("page", "1"))
 	if err != nil || page <= 0 {
@@ -63,20 +53,6 @@ func GetPaginatedStock(c *fiber.Ctx) error {
 	db.Model(dataList).Where("stocks.code_entreprise = ?", codeEntreprise).Count(&length)
 	db.Where("stocks.code_entreprise = ?", codeEntreprise).
 		Where("stocks.created_at BETWEEN ? AND ?", startDateStr, endDateStr).
-		// Joins("JOIN products ON stocks.product_id=products.id").
-		// Joins("JOIN fournisseurs ON stocks.fournisseur_id=fournisseurs.id").
-		// Select(`
-		// 	stocks.id AS id,
-		// 	products.reference AS reference,
-		// 	products.name AS name,
-		// 	stocks.quantity AS quantity,
-		// 	stocks.prix_achat AS prix_achat,
-		// 	stocks.date_expiration AS date_expiration,
-		// 	stocks.description AS description,
-		// 	stocks.created_at AS created_at,
-		// 	stocks.updated_at AS updated_at,
-		// 	stocks.signature AS signature
-		// `).
 		Offset(offset).
 		Limit(limit).
 		Order("stocks.created_at DESC").
@@ -115,18 +91,7 @@ func GetPaginatedCommandeLine(c *fiber.Ctx) error {
 	codeEntreprise := c.Params("code_entreprise")
 
 	startDateStr := c.Query("start_date")
-	endDateStr := c.Query("end_date")
-
-	// startDate, err := time.Parse("2006-01-02", startDateStr)
-	// if err != nil {
-	//     return c.Status(400).SendString("Invalid start date format")
-	// }
-
-	// endDate, err := time.Parse("2006-01-02", endDateStr)
-	// if err != nil {
-	//     return c.Status(400).SendString("Invalid end date format")
-	// }
-
+	endDateStr := c.Query("end_date") 
 	page, err := strconv.Atoi(c.Query("page", "1"))
 	if err != nil || page <= 0 {
 		page = 1 // Default page number
@@ -397,6 +362,9 @@ func GetTotalValeurProduct(c *fiber.Ctx) error {
 
 func getStockEntry(productID uint, db *gorm.DB) models.Stock {
 	var stock models.Stock
-	db.Where("product_id = ?", productID).First(&stock)
+	if productID != 0 {
+		db.Where("product_id = ?", productID).First(&stock) 
+	}
+	
 	return stock
 }
