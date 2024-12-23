@@ -112,6 +112,7 @@ func GetPaginatedCommandeLine(c *fiber.Ctx) error {
 		Limit(limit).
 		Order("commande_lines.updated_at DESC").
 		Preload("Product").
+		Preload("Plat").
 		Preload("Commande.Client").
 		Find(&dataList)
 
