@@ -35,6 +35,7 @@ func GetPaginatedCommandeEntreprise(c *fiber.Ctx) error {
 		Offset(offset).
 		Limit(limit).
 		Order("commandes.updated_at DESC").
+		Preload("TableBox").
 		Preload("CommandeLines").
 		Find(&dataList)
  
@@ -95,6 +96,7 @@ func GetPaginatedCommandeByTableBox(c *fiber.Ctx) error {
 		Offset(offset).
 		Limit(limit).
 		Order("commandes.updated_at DESC").
+		Preload("TableBox").
 		Preload("CommandeLines").
 		Find(&dataList)
 
@@ -132,7 +134,9 @@ func GetAllCommandes(c *fiber.Ctx) error {
 	var data []models.Commande
 	db.Where("code_entreprise = ?", codeEntreprise).
 		Where("pos_id = ?", posId).
-		Preload("CommandeLines").Find(&data)
+		Preload("TableBox").
+		Preload("CommandeLines").
+		Find(&data)
 	return c.JSON(fiber.Map{
 		"status":  "success",
 		"message": "All commandes",
@@ -145,7 +149,9 @@ func GetCommande(c *fiber.Ctx) error {
 	id := c.Params("id")
 	db := database.DB
 	var commande models.Commande
-	db.Preload("CommandeLines").Find(&commande, id)
+	db.Preload("TableBox").
+	Preload("CommandeLines").
+	Find(&commande, id)
 	if commande.Ncommande == 0 {
 		return c.Status(404).JSON(
 			fiber.Map{
