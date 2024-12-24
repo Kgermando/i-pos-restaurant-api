@@ -41,7 +41,7 @@ func main() {
 
 	// Middleware
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "https://pos-restaurant.up.railway.app, http://localhost:4200, file://, capacitor-electron://-" ,
+		AllowOrigins:     "https://pos-restaurant.up.railway.app, http://localhost:4200, file://, capacitor-electron://-, *" ,
 		AllowHeaders:     "Origin, Content-Type, Accept",
 		AllowCredentials: true,
 		AllowMethods: strings.Join([]string{
