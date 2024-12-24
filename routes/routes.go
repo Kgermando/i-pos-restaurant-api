@@ -170,5 +170,7 @@ func Setup(app *fiber.App) {
 	dash.Get("/:code_entreprise/all/total-product-in-stock", dashboard.GetTotalProductInStock)
 	dash.Get("/:code_entreprise/all/total-stock-dispo-sortie", dashboard.GetTotalStockDispoSortie)
 	dash.Get("/:code_entreprise/all/total-valeur-products", dashboard.GetTotalValeurProduct)
+	dash.Get("/:code_entreprise/all/courbe-ventes-jour", dashboard.GetCourbeVente24h)
+	dash.Get("/:code_entreprise/all/total-ventes-jour", dashboard.GetTotalVente24h)
 
 }
