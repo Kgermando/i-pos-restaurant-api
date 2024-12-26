@@ -1,6 +1,6 @@
 package auth
 
-import (
+import ( 
 	"os"
 	"strconv"
 	"strings"
@@ -99,7 +99,7 @@ func Login(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"message": "Mot de passe incorrect! 😰",
 		})
-	}
+	} 
 
 	if !u.Entreprise.Status {
 		c.Status(400)
@@ -127,7 +127,7 @@ func Login(c *fiber.Ctx) error {
 		Secure:   true,
 		HTTPOnly: true,
 		SameSite: "none",
-		Domain:   ".railway.app", //   "localhost",
+		Domain: ".railway.app", //   "localhost",
 		Path:     "/",
 	}
 

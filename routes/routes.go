@@ -117,6 +117,7 @@ func Setup(app *fiber.App) {
 	cmd.Get("/:code_entreprise/all/paginate", commande.GetPaginatedCommandeEntreprise)
 	cmd.Get("/:code_entreprise/:pos_id/all", commande.GetAllCommandes)
 	cmd.Get("/:code_entreprise/:pos_id/:table_box_id/all/paginate", commande.GetPaginatedCommandeByTableBox)
+	cmd.Get("/:code_entreprise/:table_box_id/total", commande.GetTotalCommande)
 	cmd.Get("/get/:id", commande.GetCommande)
 	cmd.Post("/create", commande.CreateCommande)
 	cmd.Put("/update/:id", commande.UpdateCommande)

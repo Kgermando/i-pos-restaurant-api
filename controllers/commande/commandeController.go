@@ -144,6 +144,27 @@ func GetAllCommandes(c *fiber.Ctx) error {
 	})
 }
 
+
+func GetTotalCommande(c *fiber.Ctx) error {
+	db := database.DB
+	codeEntreprise := c.Params("code_entreprise") 
+	tableBoxId := c.Params("table_box_id")
+
+	var commandes []models.Commande
+	var total int64
+
+	db.Model(commandes).Where("code_entreprise = ?", codeEntreprise).
+	Where("table_box_id = ?", tableBoxId).Count(&total)
+
+
+	return c.JSON(fiber.Map{
+		"status":  "success",
+		"message": "total commandes",
+		"data":    total,
+	})
+}
+
+
 // Get one data
 func GetCommande(c *fiber.Ctx) error {
 	id := c.Params("id")
