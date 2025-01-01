@@ -1,4 +1,4 @@
-package fournisseurclient
+package area
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 )
 
 // Paginate
-func GetPaginatedClient(c *fiber.Ctx) error {
+func GetPaginatedArea(c *fiber.Ctx) error {
 	db := database.DB
 	codeEntreprise := c.Params("code_entreprise")
 
@@ -26,15 +26,15 @@ func GetPaginatedClient(c *fiber.Ctx) error {
 
 	search := c.Query("search", "")
 
-	var dataList []models.Client
+	var dataList []models.Area
 
 	var length int64
 	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).Count(&length)
 	db.Where("code_entreprise = ?", codeEntreprise).
-		Where("fullname ILIKE ?", "%"+search+"%").
+		Where("name ILIKE ? OR province ILIKE ?", "%"+search+"%", "%"+search+"%").
 		Offset(offset).
 		Limit(limit).
-		Order("clients.updated_at DESC").
+		Order("areas.updated_at DESC"). 
 		Find(&dataList)
 
 	if err != nil {
@@ -56,38 +56,38 @@ func GetPaginatedClient(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"status":     "success",
-		"message":    "All clients",
+		"message":    "All areas",
 		"data":       dataList,
 		"pagination": pagination,
 	})
 }
 
 // Get All data
-func GetAllClients(c *fiber.Ctx) error {
+func GetAllAreas(c *fiber.Ctx) error {
 	codeEntreprise := c.Params("code_entreprise")
 	db := database.DB
 
-	var data []models.Client
+	var data []models.Area
 	db.Where("code_entreprise = ?", codeEntreprise).Find(&data)
 	return c.JSON(fiber.Map{
 		"status":  "success",
-		"message": "All clients",
+		"message": "All areas",
 		"data":    data,
 	})
 }
 
 // Get one data
-func GetClient(c *fiber.Ctx) error {
+func GetArea(c *fiber.Ctx) error {
 	id := c.Params("id")
 	db := database.DB
 
-	var client models.Client
-	db.Find(&client, id)
-	if client.Fullname == "" {
+	var area models.Area
+	db.Find(&area, id)
+	if area.Name == "" {
 		return c.Status(404).JSON(
 			fiber.Map{
 				"status":  "error",
-				"message": "No client found",
+				"message": "No area found",
 				"data":    nil,
 			},
 		)
@@ -95,15 +95,15 @@ func GetClient(c *fiber.Ctx) error {
 	return c.JSON(
 		fiber.Map{
 			"status":  "success",
-			"message": "client found",
-			"data":    client,
+			"message": "area found",
+			"data":    area,
 		},
 	)
 }
 
 // Create data
-func CreateClient(c *fiber.Ctx) error {
-	p := &models.Client{}
+func CreateArea(c *fiber.Ctx) error {
+	p := &models.Area{}
 
 	if err := c.BodyParser(&p); err != nil {
 		return err
@@ -114,24 +114,22 @@ func CreateClient(c *fiber.Ctx) error {
 	return c.JSON(
 		fiber.Map{
 			"status":  "success",
-			"message": "client created success",
+			"message": "area created success",
 			"data":    p,
 		},
 	)
 }
 
 // Update data
-func UpdateClient(c *fiber.Ctx) error {
+func UpdateArea(c *fiber.Ctx) error {
 	id := c.Params("id")
 	db := database.DB
 
 	type UpdateData struct {
-		Fullname       string `json:"fullname"`
-		Telephone      string `json:"telephone"`
-		Email          string `json:"email"`
-		Adress         string `json:"adress"`
-		Signature      string `json:"signature"`
-		CodeEntreprise uint   `json:"code_entreprise"`
+		Name           string      `json:"name"`
+		Province       string      `json:"province"`
+		Signature      string      `json:"signature"`
+		CodeEntreprise uint        `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData
@@ -146,52 +144,50 @@ func UpdateClient(c *fiber.Ctx) error {
 		)
 	}
 
-	client := new(models.Client)
+	area := new(models.Area)
 
-	db.First(&client, id)
-	client.Fullname = updateData.Fullname
-	client.Telephone = updateData.Telephone
-	client.Email = updateData.Email
-	client.Adress = updateData.Adress
-	client.Signature = updateData.Signature
-	client.CodeEntreprise = updateData.CodeEntreprise
+	db.First(&area, id)
+	area.Name = updateData.Name
+	area.Province = updateData.Province
+	area.Signature = updateData.Signature
+	area.CodeEntreprise = updateData.CodeEntreprise
 
-	db.Save(&client)
+	db.Save(&area)
 
 	return c.JSON(
 		fiber.Map{
 			"status":  "success",
-			"message": "client updated success",
-			"data":    client,
+			"message": "area updated success",
+			"data":    area,
 		},
 	)
 
 }
 
 // Delete data
-func DeleteClient(c *fiber.Ctx) error {
+func DeleteArea(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	db := database.DB
 
-	var client models.Client
-	db.First(&client, id)
-	if client.Fullname == "" {
+	var area models.Area
+	db.First(&area, id)
+	if area.Name == "" {
 		return c.Status(404).JSON(
 			fiber.Map{
 				"status":  "error",
-				"message": "No client found",
+				"message": "No area found",
 				"data":    nil,
 			},
 		)
 	}
 
-	db.Delete(&client)
+	db.Delete(&area)
 
 	return c.JSON(
 		fiber.Map{
 			"status":  "success",
-			"message": "client deleted success",
+			"message": "area deleted success",
 			"data":    nil,
 		},
 	)

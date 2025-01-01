@@ -1,12 +1,15 @@
 package routes
 
 import (
+	"kgermando/i-pos-restaurant-api/controllers/area"
 	"kgermando/i-pos-restaurant-api/controllers/auth"
 	"kgermando/i-pos-restaurant-api/controllers/commande"
 	"kgermando/i-pos-restaurant-api/controllers/contact"
 	"kgermando/i-pos-restaurant-api/controllers/dashboard"
 	"kgermando/i-pos-restaurant-api/controllers/entreprise"
 	"kgermando/i-pos-restaurant-api/controllers/fournisseurclient"
+	"kgermando/i-pos-restaurant-api/controllers/ingredient"
+	"kgermando/i-pos-restaurant-api/controllers/livraison"
 	"kgermando/i-pos-restaurant-api/controllers/pos"
 	"kgermando/i-pos-restaurant-api/controllers/productplat"
 	"kgermando/i-pos-restaurant-api/controllers/stock"
@@ -90,6 +93,17 @@ func Setup(app *fiber.App) {
 	pr.Put("/update/:id", productplat.UpdateProduct)
 	pr.Delete("/delete/:id", productplat.DeleteProduct)
 
+	// Stock controller
+	s := api.Group("/stocks")
+	s.Get("/all", stock.GetAllStocks)
+	s.Get("/all/paginate/:product_id", stock.GetPaginatedStock)
+	s.Get("/all/total/:product_id", stock.GetTotalStock)
+	s.Get("/all/get/:product_id", stock.GetStockMargeBeneficiaire)
+	s.Get("/get/:id", stock.GetStock)
+	s.Post("/create", stock.CreateStock)
+	s.Put("/update/:id", stock.UpdateStock)
+	s.Delete("/delete/:id", stock.DeleteStock)
+
 	// Plat controller
 	pl := api.Group("/plats")
 	pl.Get("/:code_entreprise/all/paginate", productplat.GetPaginatedPlatEntreprise)
@@ -101,16 +115,27 @@ func Setup(app *fiber.App) {
 	pl.Put("/update/:id", productplat.UpdatePlat)
 	pl.Delete("/delete/:id", productplat.DeletePlat)
 
-	// Stock controller
-	s := api.Group("/stocks")
-	s.Get("/all", stock.GetAllStocks)
-	s.Get("/all/paginate/:product_id", stock.GetPaginatedStock)
-	s.Get("/all/total/:product_id", stock.GetTotalStock)
-	s.Get("/all/get/:product_id", stock.GetStockMargeBeneficiaire)
-	s.Get("/get/:id", stock.GetStock)
-	s.Post("/create", stock.CreateStock)
-	s.Put("/update/:id", stock.UpdateStock)
-	s.Delete("/delete/:id", stock.DeleteStock)
+	// Ingredient controller
+	in := api.Group("/ingredients")
+	in.Get("/:code_entreprise/all/paginate", ingredient.GetPaginatedIngredientEntreprise)
+	in.Get("/:code_entreprise/:pos_id/all", ingredient.GetAllIngredients)
+	in.Get("/:code_entreprise/:pos_id/all/paginate", ingredient.GetPaginatedIngredient)
+	in.Get("/:code_entreprise/:pos_id/all/search", ingredient.GetAllIngredientBySearch)
+	in.Get("/get/:id", ingredient.GetIngredient)
+	in.Post("/create", ingredient.CreateIngredient)
+	in.Put("/update/:id", ingredient.UpdateIngredient)
+	in.Delete("/delete/:id", ingredient.DeleteIngredient)
+
+	// ingredients Stock controller
+	is := api.Group("/ingredients-stocks")
+	is.Get("/all", ingredient.GetAllIngredientStocks)
+	is.Get("/all/paginate/:ingredient_id", ingredient.GetPaginatedIngredientStock)
+	is.Get("/:code_entreprise/total/get-all/:ingredient_id", ingredient.GetStatsIngredientStock)
+	is.Get("/:code_entreprise/total/get/:ingredient_id", ingredient.GetStatsParIngredientStock)
+	is.Get("/get/:id", ingredient.GetIngredientStock)
+	is.Post("/create", ingredient.CreateIngredientStock)
+	is.Put("/update/:id", ingredient.UpdateIngredientStock)
+	is.Delete("/delete/:id", ingredient.DeleteIngredientStock)
 
 	// Commande controller
 	cmd := api.Group("/commandes")
@@ -127,12 +152,24 @@ func Setup(app *fiber.App) {
 	cmdl := api.Group("/commandes-lines")
 	cmdl.Get("/all", commande.GetAllCommandeLines)
 	cmdl.Get("/all/:commande_id", commande.GetAllCommandeLineById)
+	cmdl.Get("/all/livraison/:livraison_id", commande.GetAllCommandeLineByIdLivraison)
 	cmdl.Get("/all/paginate/:commande_id", commande.GetPaginatedCommandeLineByID)
 	cmdl.Get("/all/total/:product_id", commande.GetTotalCommandeLine)
 	cmdl.Get("/get/:id", commande.GetCommandeLine)
 	cmdl.Post("/create", commande.CreateCommandeLine)
 	cmdl.Put("/update/:id", commande.UpdateCommandeLine)
 	cmdl.Delete("/delete/:id", commande.DeleteCommandeLine)
+
+	// Compositions controller
+	comp := api.Group("/compositions") 
+	comp.Get("/:code_entreprise/:pos_id/all", commande.GetAllCompositions)
+	comp.Get("/all/paginate/:plat_id", commande.GetPaginatedComposition)
+	comp.Get("/all/total/:plat_id", commande.GetTotalComposition)
+	comp.Get("/all/get/:plat_id", commande.GetCompositionMargeBeneficiaire)
+	comp.Get("/get/:id", commande.GetComposition)
+	comp.Post("/create", commande.CreateComposition)
+	comp.Put("/update/:id", commande.UpdateComposition)
+	comp.Delete("/delete/:id", commande.DeleteComposition)
 
 	// Client controller
 	cl := api.Group("/clients")
@@ -151,6 +188,35 @@ func Setup(app *fiber.App) {
 	fs.Post("/create", fournisseurclient.CreateFournisseur)
 	fs.Put("/update/:id", fournisseurclient.UpdateFournisseur)
 	fs.Delete("/delete/:id", fournisseurclient.DeleteFournisseur)
+
+	// Livreur controller
+	lv := api.Group("/livreurs")
+	lv.Get("/:code_entreprise/all", livraison.GetAllLivreurs)
+	lv.Get("/:code_entreprise/all/paginate", livraison.GetPaginatedLivreur)
+	lv.Get("/get/:id", livraison.GetLivreur)
+	lv.Post("/create", livraison.CreateLivreur)
+	lv.Put("/update/:id", livraison.UpdateLivreur)
+	lv.Delete("/delete/:id", livraison.DeleteLivreur)
+
+	// Livraison controller
+	lvs := api.Group("/livraisons")
+	lvs.Get("/:code_entreprise/all/paginate", livraison.GetPaginatedLivraisonEntreprise)
+	lvs.Get("/:code_entreprise/:pos_id/all", livraison.GetAllLivraisons)
+	lvs.Get("/:code_entreprise/:pos_id/all/paginate", livraison.GetPaginatedLivraison)
+	lvs.Get("/:code_entreprise/:pos_id/all/search", livraison.GetAllLivraisonBySearch)
+	lvs.Get("/get/:id", livraison.GetLivraison)
+	lvs.Post("/create", livraison.CreateLivraison)
+	lvs.Put("/update/:id", livraison.UpdateLivraison)
+	lvs.Delete("/delete/:id", livraison.DeleteLivraison)
+
+	// Area controller
+	are := api.Group("/areas")
+	are.Get("/:code_entreprise/all", area.GetAllAreas)
+	are.Get("/:code_entreprise/all/paginate", area.GetPaginatedArea)
+	are.Get("/get/:id", area.GetArea)
+	are.Post("/create", area.CreateArea)
+	are.Put("/update/:id", area.UpdateArea)
+	are.Delete("/delete/:id", area.DeleteArea)
 
 	// Contact controller
 	ctc := api.Group("/contacts")

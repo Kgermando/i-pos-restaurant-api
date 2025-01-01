@@ -1,4 +1,4 @@
-package fournisseurclient
+package livraison
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 )
 
 // Paginate
-func GetPaginatedClient(c *fiber.Ctx) error {
+func GetPaginatedLivreur(c *fiber.Ctx) error {
 	db := database.DB
 	codeEntreprise := c.Params("code_entreprise")
 
@@ -26,15 +26,15 @@ func GetPaginatedClient(c *fiber.Ctx) error {
 
 	search := c.Query("search", "")
 
-	var dataList []models.Client
+	var dataList []models.Livreur
 
 	var length int64
 	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).Count(&length)
 	db.Where("code_entreprise = ?", codeEntreprise).
-		Where("fullname ILIKE ?", "%"+search+"%").
+		Where("name_society ILIKE ? OR livreur_name ILIKE ?", "%"+search+"%", "%"+search+"%").
 		Offset(offset).
 		Limit(limit).
-		Order("clients.updated_at DESC").
+		Order("livreurs.updated_at DESC"). 
 		Find(&dataList)
 
 	if err != nil {
@@ -56,38 +56,38 @@ func GetPaginatedClient(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"status":     "success",
-		"message":    "All clients",
+		"message":    "All livreurs",
 		"data":       dataList,
 		"pagination": pagination,
 	})
 }
 
 // Get All data
-func GetAllClients(c *fiber.Ctx) error {
+func GetAllLivreurs(c *fiber.Ctx) error {
 	codeEntreprise := c.Params("code_entreprise")
 	db := database.DB
 
-	var data []models.Client
+	var data []models.Livreur
 	db.Where("code_entreprise = ?", codeEntreprise).Find(&data)
 	return c.JSON(fiber.Map{
 		"status":  "success",
-		"message": "All clients",
+		"message": "All livreurs",
 		"data":    data,
 	})
 }
 
 // Get one data
-func GetClient(c *fiber.Ctx) error {
+func GetLivreur(c *fiber.Ctx) error {
 	id := c.Params("id")
 	db := database.DB
 
-	var client models.Client
-	db.Find(&client, id)
-	if client.Fullname == "" {
+	var livreur models.Livreur
+	db.Find(&livreur, id)
+	if livreur.NameSociety == "" {
 		return c.Status(404).JSON(
 			fiber.Map{
 				"status":  "error",
-				"message": "No client found",
+				"message": "No livreur found",
 				"data":    nil,
 			},
 		)
@@ -95,15 +95,15 @@ func GetClient(c *fiber.Ctx) error {
 	return c.JSON(
 		fiber.Map{
 			"status":  "success",
-			"message": "client found",
-			"data":    client,
+			"message": "livreur found",
+			"data":    livreur,
 		},
 	)
 }
 
 // Create data
-func CreateClient(c *fiber.Ctx) error {
-	p := &models.Client{}
+func CreateLivreur(c *fiber.Ctx) error {
+	p := &models.Livreur{}
 
 	if err := c.BodyParser(&p); err != nil {
 		return err
@@ -114,24 +114,26 @@ func CreateClient(c *fiber.Ctx) error {
 	return c.JSON(
 		fiber.Map{
 			"status":  "success",
-			"message": "client created success",
+			"message": "livreur created success",
 			"data":    p,
 		},
 	)
 }
 
 // Update data
-func UpdateClient(c *fiber.Ctx) error {
+func UpdateLivreur(c *fiber.Ctx) error {
 	id := c.Params("id")
 	db := database.DB
 
 	type UpdateData struct {
-		Fullname       string `json:"fullname"`
+		NameSociety    string `json:"name_society"`
+		LivreurName    string `json:"livreur_name"`
 		Telephone      string `json:"telephone"`
 		Email          string `json:"email"`
-		Adress         string `json:"adress"`
+		Rccm           string `json:"rccm"`
+		IdNat          string `json:"idnat"`
 		Signature      string `json:"signature"`
-		CodeEntreprise uint   `json:"code_entreprise"`
+		CodeEntreprise uint   `json:"code_entreprise"` 
 	}
 
 	var updateData UpdateData
@@ -146,52 +148,54 @@ func UpdateClient(c *fiber.Ctx) error {
 		)
 	}
 
-	client := new(models.Client)
+	livreur := new(models.Livreur)
 
-	db.First(&client, id)
-	client.Fullname = updateData.Fullname
-	client.Telephone = updateData.Telephone
-	client.Email = updateData.Email
-	client.Adress = updateData.Adress
-	client.Signature = updateData.Signature
-	client.CodeEntreprise = updateData.CodeEntreprise
+	db.First(&livreur, id)
+	livreur.NameSociety = updateData.NameSociety
+	livreur.LivreurName = updateData.LivreurName
+	livreur.Telephone = updateData.Telephone
+	livreur.Email = updateData.Email
+	livreur.Rccm = updateData.Rccm
+	livreur.IdNat = updateData.IdNat 
+	livreur.Signature = updateData.Signature
+	livreur.CodeEntreprise = updateData.CodeEntreprise
 
-	db.Save(&client)
+	db.Save(&livreur)
 
 	return c.JSON(
 		fiber.Map{
 			"status":  "success",
-			"message": "client updated success",
-			"data":    client,
+			"message": "livreur updated success",
+			"data":    livreur,
 		},
 	)
 
 }
 
 // Delete data
-func DeleteClient(c *fiber.Ctx) error {
+func DeleteLivreur(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	db := database.DB
 
-	var client models.Client
-	db.First(&client, id)
-	if client.Fullname == "" {
+	var livreur models.Livreur
+	db.First(&livreur, id)
+	if livreur.NameSociety == "" {
 		return c.Status(404).JSON(
 			fiber.Map{
 				"status":  "error",
-				"message": "No client found",
+				"message": "No livreur found",
 				"data":    nil,
 			},
 		)
 	}
 
-	db.Delete(&client)
+	db.Delete(&livreur)
 
 	return c.JSON(
 		fiber.Map{
 			"status":  "success",
-			"message": "client deleted success",
+			"message": "livreur deleted success",
 			"data":    nil,
 		},
 	)

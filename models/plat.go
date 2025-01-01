@@ -17,5 +17,6 @@ type Plat struct {
 	PosID          uint           `json:"pos_id"`
 	Pos            Pos            `gorm:"foreignKey:PosID"`
 	CodeEntreprise uint           `json:"code_entreprise"`
-	CommadeLines   []CommandeLine `gorm:"foreignKey:ProductID"`
+	CommadeLines   []CommandeLine `gorm:"foreignKey:PlatID"`
+	Compositions   []Composition  `gorm:"foreignKey:PlatID"`
 }

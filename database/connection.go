@@ -30,7 +30,7 @@ func Connect() {
 	}
 
 	DB = connection
-	fmt.Println("Database Connected 🎉!") 
+	fmt.Println("Database Connected 🎉!")
 
 	connection.AutoMigrate(
 		&models.User{},
@@ -43,7 +43,11 @@ func Connect() {
 		&models.Pos{},
 		&models.Product{},
 		&models.Stock{},
-	
+		&models.Ingredient{},
+		&models.Composition{},
+		&models.IngredientStock{},
+		&models.Area{},
+		&models.Livraison{},
+		&models.Livreur{},
 	)
-
 }

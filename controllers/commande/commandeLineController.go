@@ -83,18 +83,38 @@ func GetAllCommandeLineById(c *fiber.Ctx) error {
 	commandeID := c.Params("commande_id")
 
 	var dataList []models.CommandeLine
-	db.Where("commande_lines.commande_id = ?", commandeID). 
+	db.Where("commande_lines.commande_id = ?", commandeID).
 		Order("commande_lines.updated_at DESC").
 		Preload("Commande").
 		Preload("Product").
 		Preload("Plat").
-		Find(&dataList) 
+		Find(&dataList)
 	return c.JSON(fiber.Map{
 		"status":  "success",
 		"message": "All commande lines",
 		"data":    dataList,
 	})
 }
+
+// Get All data
+func GetAllCommandeLineByIdLivraison(c *fiber.Ctx) error {
+	db := database.DB
+	commandeID := c.Params("livraison_id")
+
+	var dataList []models.CommandeLine
+	db.Where("commande_lines.livraison_id = ?", commandeID).
+		Order("commande_lines.updated_at DESC").
+		Preload("Livraison").
+		Preload("Product").
+		Preload("Plat").
+		Find(&dataList)
+	return c.JSON(fiber.Map{
+		"status":  "success",
+		"message": "All commande lines",
+		"data":    dataList,
+	})
+}
+
 
 // Get All data
 func GetAllCommandeLines(c *fiber.Ctx) error {
@@ -119,7 +139,6 @@ func GetTotalCommandeLine(c *fiber.Ctx) error {
 	if productId != "0" {
 		db.Model(data).Where("product_id = ?", productId).Select("SUM(quantity)").Scan(&totalQty)
 	}
-	
 
 	return c.JSON(fiber.Map{
 		"status":  "success",
@@ -178,6 +197,7 @@ func UpdateCommandeLine(c *fiber.Ctx) error {
 
 	type UpdateData struct {
 		CommandeID     uint   `json:"commande_id"`
+		LivraisonID    uint   `json:"livraison_id"`
 		ProductID      uint   `json:"product_id"`
 		Quantity       uint64 `json:"quantity"`
 		CodeEntreprise uint   `json:"code_entreprise"`
@@ -199,6 +219,7 @@ func UpdateCommandeLine(c *fiber.Ctx) error {
 
 	db.First(&commandeLine, id)
 	commandeLine.CommandeID = updateData.CommandeID
+	commandeLine.LivraisonID = updateData.LivraisonID
 	commandeLine.ProductID = updateData.ProductID
 	commandeLine.Quantity = updateData.Quantity
 	commandeLine.CodeEntreprise = updateData.CodeEntreprise
