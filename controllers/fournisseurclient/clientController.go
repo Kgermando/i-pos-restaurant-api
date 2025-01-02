@@ -128,8 +128,12 @@ func UpdateClient(c *fiber.Ctx) error {
 	type UpdateData struct {
 		Fullname       string `json:"fullname"`
 		Telephone      string `json:"telephone"`
+		Telephone2     string `json:"telephone2"`
 		Email          string `json:"email"`
 		Adress         string `json:"adress"`
+		Birthday       string `json:"birthday"`
+		Organisation   string `json:"organisation"`
+		WebSite        string `json:"webSite"`
 		Signature      string `json:"signature"`
 		CodeEntreprise uint   `json:"code_entreprise"`
 	}
@@ -151,8 +155,12 @@ func UpdateClient(c *fiber.Ctx) error {
 	db.First(&client, id)
 	client.Fullname = updateData.Fullname
 	client.Telephone = updateData.Telephone
+	client.Telephone2 = updateData.Telephone2
 	client.Email = updateData.Email
 	client.Adress = updateData.Adress
+	client.Birthday = updateData.Birthday
+	client.Organisation = updateData.Organisation
+	client.WebSite = updateData.WebSite
 	client.Signature = updateData.Signature
 	client.CodeEntreprise = updateData.CodeEntreprise
 
