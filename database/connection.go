@@ -49,5 +49,6 @@ func Connect() {
 		&models.Area{},
 		&models.Livraison{},
 		&models.Livreur{},
+		&models.Caisse{},
 	)
 }

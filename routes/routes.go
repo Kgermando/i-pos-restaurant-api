@@ -7,6 +7,7 @@ import (
 	"kgermando/i-pos-restaurant-api/controllers/contact"
 	"kgermando/i-pos-restaurant-api/controllers/dashboard"
 	"kgermando/i-pos-restaurant-api/controllers/entreprise"
+	"kgermando/i-pos-restaurant-api/controllers/finance"
 	"kgermando/i-pos-restaurant-api/controllers/fournisseurclient"
 	"kgermando/i-pos-restaurant-api/controllers/ingredient"
 	"kgermando/i-pos-restaurant-api/controllers/livraison"
@@ -161,7 +162,7 @@ func Setup(app *fiber.App) {
 	cmdl.Delete("/delete/:id", commande.DeleteCommandeLine)
 
 	// Compositions controller
-	comp := api.Group("/compositions") 
+	comp := api.Group("/compositions")
 	comp.Get("/:code_entreprise/:pos_id/all", commande.GetAllCompositions)
 	comp.Get("/all/paginate/:plat_id", commande.GetPaginatedComposition)
 	comp.Get("/all/total/:plat_id", commande.GetTotalComposition)
@@ -226,6 +227,16 @@ func Setup(app *fiber.App) {
 	ctc.Post("/create", contact.CreateContact)
 	ctc.Put("/update/:id", contact.UpdateContact)
 	ctc.Delete("/delete/:id", contact.DeleteContact)
+
+	// Finance controller
+	cais := api.Group("/caisses")
+	cais.Get("/:code_entreprise/all/paginate", finance.GetPaginatedCaisseEntreprise)
+	cais.Get("/:code_entreprise/:pos_id/all/paginate", finance.GetPaginatedCaisse)
+	cais.Get("/:code_entreprise/:pos_id/all", finance.GetAllCaisses)
+	cais.Get("/get/:id", finance.GetCaisse)
+	cais.Post("/create", finance.CreateCaisse)
+	cais.Put("/update/:id", finance.UpdateCaisse)
+	cais.Delete("/delete/:id", finance.DeleteCaisse)
 
 	// Dashboard controller
 	dash := api.Group("/dashboard")
