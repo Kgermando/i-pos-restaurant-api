@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// Get data
+// Get total Client et Fournisseurs
 func GetTotalClientFournisseur(c *fiber.Ctx) error {
 	db := database.DB
 	codeEntreprise := c.Params("code_entreprise")
@@ -40,3 +40,5 @@ func GetTotalClientFournisseur(c *fiber.Ctx) error {
 		"data":    response,
 	})
 }
+
+
