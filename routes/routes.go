@@ -244,11 +244,28 @@ func Setup(app *fiber.App) {
 	dash.Get("/:code_entreprise/all/commandeline", dashboard.GetPaginatedCommandeLine)
 	dash.Get("/:code_entreprise/all/entree-sortie", dashboard.GetEntreeSortie)
 	dash.Get("/:code_entreprise/all/sales-profits", dashboard.GetSaleProfit)
-	dash.Get("/:code_entreprise/all/stocks-disponible", dashboard.GetStockDisponible)
+	
 	dash.Get("/:code_entreprise/all/total-product-in-stock", dashboard.GetTotalProductInStock)
 	dash.Get("/:code_entreprise/all/total-stock-dispo-sortie", dashboard.GetTotalStockDispoSortie)
 	dash.Get("/:code_entreprise/all/total-valeur-products", dashboard.GetTotalValeurProduct)
 	dash.Get("/:code_entreprise/all/courbe-ventes-jour", dashboard.GetCourbeVente24h)
 	dash.Get("/:code_entreprise/all/total-ventes-jour", dashboard.GetTotalVente24h)
+
+
+
+	// Dash Plat Product controller
+	dash.Get("/:code_entreprise/plats-products/ventes", dashboard.GetTotalPlatProductVendu)
+	dash.Get("/:code_entreprise/plats-products/courbe-ventes-profits", dashboard.GetVenteProfitPlatProductMonth)
+	dash.Get("/:code_entreprise/plats-products/table/tableau-sortie-products-plats", dashboard.GetTablePaginatedCmdLineSortieProductPlat)
+	dash.Get("/:code_entreprise/plats-products/livraison/tableau-sortie-products-plats", dashboard.GetLivraisonPaginatedCmdLineSortieProductPlat)
+	dash.Get("/:code_entreprise/all/stocks-disponible", dashboard.GetStockDisponible)
+	dash.Get("/:code_entreprise/plats-products/percentage", dashboard.GetCommandeLineLivraisonPercentage)
+	dash.Get("/:code_entreprise/plats-products/livraison-count", dashboard.GetCommandeLineLivraisonPieChartData)
+
+	// Dash Caisses controller
+	dash.Get("/:code_entreprise/caisses/total", dashboard.GetTotalCaisse)
+	dash.Get("/:code_entreprise/caisses/total-ventes-journalieres", dashboard.GetTotalVentesParJour)
+	dash.Get("/:code_entreprise/caisses/courbe-ventes-profits", dashboard.GetCourbeVenteProfit24h)
+	dash.Get("/:code_entreprise/caisses/tableau-entrees-sorties", dashboard.GetTableauEntreeSorties)
 
 }

@@ -24,7 +24,8 @@ type IngredientStock struct {
 }
 
 type IngredientUsage struct {
-	Id             string  `gorm:"column:id"`
+	Id             uint  `gorm:"column:id"`
+	PlatID         uint    `gorm:"column:plat_id"`
 	IngredientName string  `gorm:"column:name"`
 	Qty            float64 `gorm:"column:qty"`
 	Unite          string  `gorm:"column:unite"`

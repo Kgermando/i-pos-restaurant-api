@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 type Caisse struct {
 	gorm.Model
 
-	TypeTransaction string  `gorm:"not null" json:"type_transaction"` // Entreé ou Sortie
+	TypeTransaction string  `gorm:"not null" json:"type_transaction"` // Entrée ou Sortie
 	Montant         float64 `gorm:"not null" json:"montant"`          // Montant de la transaction
 	Libelle         string  `json:"libelle"`          // Description de la transaction
 	Reference       string  `json:"reference"`        // Nombre aleatoire
