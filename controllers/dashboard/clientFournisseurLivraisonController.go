@@ -11,8 +11,6 @@ import (
 func GetTotalClientFournisseur(c *fiber.Ctx) error {
 	db := database.DB
 	codeEntreprise := c.Params("code_entreprise")
-	start_date := c.Query("start_date")
-	end_date := c.Query("end_date")
 
 	var clientCount int64 = 0
 
