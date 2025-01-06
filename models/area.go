@@ -11,3 +11,9 @@ type Area struct {
 	CodeEntreprise uint        `json:"code_entreprise"`
 	Livraisons     []Livraison `gorm:"foreignKey:AreaID"`
 }
+
+
+type AreaCount struct {
+	AreaName string `json:"area_name"`
+	Count    int64  `json:"count"`
+}

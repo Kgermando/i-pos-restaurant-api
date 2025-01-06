@@ -268,4 +268,9 @@ func Setup(app *fiber.App) {
 	dash.Get("/:code_entreprise/caisses/courbe-ventes-profits", dashboard.GetCourbeVenteProfit24h)
 	dash.Get("/:code_entreprise/caisses/tableau-entrees-sorties", dashboard.GetTableauEntreeSorties)
 
+	// Dash Client Fournisseur et Livraison
+	dash.Get("/:code_entreprise/cl-fseur-liv/total", dashboard.GetTotalClientFournisseur)
+	dash.Get("/:code_entreprise/cl-fseur-liv/courbe-areas", dashboard.GetCourbeZoneLivraison)
+	dash.Get("/:code_entreprise/cl-fseur-liv/best-clients", dashboard.GetClientsWithMostDeliveries)
+	dash.Get("/:code_entreprise/cl-fseur-liv/best-fournisseurs", dashboard.GetTop10FournisseursWithMostStockValue)
 }

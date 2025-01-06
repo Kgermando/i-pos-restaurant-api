@@ -8,7 +8,7 @@ import (
 
 type Stock struct {
 	gorm.Model
- 
+
 	PosID          uint        `json:"pos_id"`
 	Pos            Pos         `gorm:"foreignKey:PosID"`
 	ProductID      uint        `json:"product_id"`
@@ -21,4 +21,11 @@ type Stock struct {
 	DateExpiration time.Time   `gorm:"not null" json:"date_expiration"`
 	Signature      string      `json:"signature"`
 	CodeEntreprise uint        `json:"code_entreprise"`
+}
+
+type FournisseurStock struct {
+	Name           string  `json:"name"`
+	Telephone      string  `json:"telephone"`
+	TypeFourniture string  `json:"type_fourniture"`
+	TotalValue    float64 `json:"total_value"`
 }

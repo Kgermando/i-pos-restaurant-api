@@ -14,7 +14,7 @@ type Client struct {
 	Adress       string `json:"adress"`
 	Birthday     string `json:"birthday"`
 	Organisation string `json:"organisation"`
-	WebSite      string `json:"webSite"`
+	WebSite      string `json:"website"`
 
 	Signature      string `json:"signature"`
 	CodeEntreprise uint   `json:"code_entreprise"`

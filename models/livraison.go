@@ -22,3 +22,11 @@ type Livraison struct {
 
 	CommandeLines []CommandeLine `gorm:"foreignKey:LivraisonID"`
 }
+
+type LivraisonArea struct {
+	Fullname  string `json:"fullname"`
+	Telephone string `json:"telephone"`
+	Email     string `json:"email"`
+	Count     string `json:"count"`
+}
+
