@@ -45,15 +45,12 @@ func GetTotalClientFournisseur(c *fiber.Ctx) error {
 func GetCourbeZoneLivraison(c *fiber.Ctx) error {
 	db := database.DB
 	codeEntreprise := c.Params("code_entreprise")
-	start_date := c.Query("start_date")
-	end_date := c.Query("end_date")
 
 	var areaCounts []models.AreaCount
 	db.Table("livraisons").
 		Select("areas.name as area_name, COUNT(*) as count").
 		Joins("JOIN areas ON livraisons.area_id = areas.id").
 		Where("livraisons.code_entreprise = ?", codeEntreprise).
-		Where("livraisons.created_at BETWEEN ? AND ?", start_date, end_date).
 		Group("areas.name").
 		Scan(&areaCounts)
 
@@ -72,8 +69,6 @@ func GetCourbeZoneLivraison(c *fiber.Ctx) error {
 func GetClientsWithMostDeliveries(c *fiber.Ctx) error {
 	db := database.DB
 	codeEntreprise := c.Params("code_entreprise")
-	start_date := c.Query("start_date")
-	end_date := c.Query("end_date")
 
 	var livraisonAreas []models.LivraisonArea
 	query := `
@@ -89,7 +84,7 @@ func GetClientsWithMostDeliveries(c *fiber.Ctx) error {
 		JOIN
 			areas a ON l.area_id = a.id
 		WHERE
-		l.code_entreprise = ? AND l.created_at BETWEEN ? AND ? 
+		l.code_entreprise = ?
 		GROUP BY
 			c.fullname,
 			c.telephone,
@@ -97,7 +92,7 @@ func GetClientsWithMostDeliveries(c *fiber.Ctx) error {
 		ORDER BY COUNT(a.id) DESC
 		LIMIT 10;
 	`
-	if err := db.Raw(query, codeEntreprise, start_date, end_date).Scan(&livraisonAreas).Error; err != nil {
+	if err := db.Raw(query, codeEntreprise).Scan(&livraisonAreas).Error; err != nil {
 		return err
 	}
 	
@@ -135,9 +130,7 @@ func GetClientsWithMostDeliveries(c *fiber.Ctx) error {
 func GetTop10FournisseursWithMostStockValue(c *fiber.Ctx) error {
 	db := database.DB
 	codeEntreprise := c.Params("code_entreprise")
-	start_date := c.Query("start_date")
-	end_date := c.Query("end_date")
-
+	
 	var fournisseurStocks []models.FournisseurStock
 	query := `
 		SELECT
@@ -150,7 +143,7 @@ func GetTop10FournisseursWithMostStockValue(c *fiber.Ctx) error {
 		JOIN
 			fournisseurs f ON s.fournisseur_id = f.id
 	 WHERE
-		s.code_entreprise = ? AND s.created_at BETWEEN ? AND ? 
+		s.code_entreprise = ?
 		GROUP BY
 			f.name,
 			f.telephone,
@@ -158,7 +151,7 @@ func GetTop10FournisseursWithMostStockValue(c *fiber.Ctx) error {
 ORDER BY SUM(prix_achat) DESC
 LIMIT 10;
 	`
-	if err := db.Raw(query, codeEntreprise, start_date, end_date).Scan(&fournisseurStocks).Error; err != nil {
+	if err := db.Raw(query, codeEntreprise).Scan(&fournisseurStocks).Error; err != nil {
 		return err
 	}
 
