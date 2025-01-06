@@ -18,19 +18,16 @@ func GetTotalClientFournisseur(c *fiber.Ctx) error {
 
 	db.Model(&models.Client{}).
 		Where("code_entreprise = ?", codeEntreprise).
-		Where("created_at BETWEEN ? AND ?", start_date, end_date). // Filter by date
 		Count(&clientCount)
 
 	var fournisseurCount int64 = 0
 	db.Model(&models.Fournisseur{}).
 		Where("code_entreprise = ?", codeEntreprise).
-		Where("created_at BETWEEN ? AND ?", start_date, end_date). // Filter by date
 		Count(&fournisseurCount)
 
 	var areaCount int64 = 0
 	db.Table("livraisons").
 		Where("code_entreprise = ?", codeEntreprise).
-		Where("created_at BETWEEN ? AND ?", start_date, end_date).
 		Count(&areaCount)
 
 	response := map[string]interface{}{
