@@ -16,7 +16,7 @@ type Plat struct {
 	Signature      string         `json:"signature"`
 	PosID          uint           `json:"pos_id"`
 	Pos            Pos            `gorm:"foreignKey:PosID"`
-	CodeEntreprise uint           `json:"code_entreprise"`
+	CodeEntreprise uint64         `json:"code_entreprise"`
 	CommadeLines   []CommandeLine `gorm:"foreignKey:PlatID"`
 	Compositions   []Composition  `gorm:"foreignKey:PlatID"`
 }

@@ -17,5 +17,5 @@ type CommandeLine struct {
 	Product        Product `gorm:"foreignKey:ProductID"`
 	Plat           Plat    `gorm:"foreignKey:PlatID"`
 	Quantity       uint64  `gorm:"not null" json:"quantity"`
-	CodeEntreprise uint    `json:"code_entreprise"`
+	CodeEntreprise uint64  `json:"code_entreprise"`
 }

@@ -178,6 +178,7 @@ func Setup(app *fiber.App) {
 	cl.Get("/:code_entreprise/all/paginate", fournisseurclient.GetPaginatedClient)
 	cl.Get("/get/:id", fournisseurclient.GetClient)
 	cl.Post("/create", fournisseurclient.CreateClient)
+	cl.Post("/uploads", fournisseurclient.UploadCsvDataClient)
 	cl.Put("/update/:id", fournisseurclient.UpdateClient)
 	cl.Delete("/delete/:id", fournisseurclient.DeleteClient)
 

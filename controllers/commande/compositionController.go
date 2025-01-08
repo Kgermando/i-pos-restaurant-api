@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"kgermando/i-pos-restaurant-api/database"
 	"kgermando/i-pos-restaurant-api/models"
-	"strconv" 
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -37,7 +37,7 @@ func GetPaginatedComposition(c *fiber.Ctx) error {
 		Limit(limit).
 		Order("compositions.created_at DESC").
 		Preload("Plat").
-		Preload("Ingredient"). 
+		Preload("Ingredient").
 		Find(&dataList)
 
 	if err != nil {
@@ -106,9 +106,9 @@ func GetAllCompositions(c *fiber.Ctx) error {
 
 	var data []models.Composition
 	db.Where("code_entreprise = ?", codeEntreprise).
-	Where("pos_id = ?", posId).
-	Preload("Ingredient").
-	Find(&data)
+		Where("pos_id = ?", posId).
+		Preload("Ingredient").
+		Find(&data)
 	return c.JSON(fiber.Map{
 		"status":  "success",
 		"message": "All compositions",
@@ -166,11 +166,11 @@ func UpdateComposition(c *fiber.Ctx) error {
 	db := database.DB
 
 	type UpdateData struct {
-		PlatID         uint       `json:"plat_id"`
-		IngredientID   uint       `json:"ingredient_id"`
-		Quantity       uint64     `json:"quantity"` 
-		Signature      string     `json:"signature"`
-		CodeEntreprise uint       `json:"code_entreprise"`
+		PlatID         uint   `json:"plat_id"`
+		IngredientID   uint   `json:"ingredient_id"`
+		Quantity       uint64 `json:"quantity"`
+		Signature      string `json:"signature"`
+		CodeEntreprise uint64 `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData

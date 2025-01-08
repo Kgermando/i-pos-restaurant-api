@@ -34,7 +34,7 @@ func GetPaginatedLivreur(c *fiber.Ctx) error {
 		Where("name_society ILIKE ? OR livreur_name ILIKE ?", "%"+search+"%", "%"+search+"%").
 		Offset(offset).
 		Limit(limit).
-		Order("livreurs.updated_at DESC"). 
+		Order("livreurs.updated_at DESC").
 		Find(&dataList)
 
 	if err != nil {
@@ -133,7 +133,7 @@ func UpdateLivreur(c *fiber.Ctx) error {
 		Rccm           string `json:"rccm"`
 		IdNat          string `json:"idnat"`
 		Signature      string `json:"signature"`
-		CodeEntreprise uint   `json:"code_entreprise"` 
+		CodeEntreprise uint64 `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData
@@ -156,7 +156,7 @@ func UpdateLivreur(c *fiber.Ctx) error {
 	livreur.Telephone = updateData.Telephone
 	livreur.Email = updateData.Email
 	livreur.Rccm = updateData.Rccm
-	livreur.IdNat = updateData.IdNat 
+	livreur.IdNat = updateData.IdNat
 	livreur.Signature = updateData.Signature
 	livreur.CodeEntreprise = updateData.CodeEntreprise
 

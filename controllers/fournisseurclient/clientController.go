@@ -1,6 +1,7 @@
 package fournisseurclient
 
 import (
+	"encoding/json"
 	"fmt"
 	"kgermando/i-pos-restaurant-api/database"
 	"kgermando/i-pos-restaurant-api/models"
@@ -135,7 +136,7 @@ func UpdateClient(c *fiber.Ctx) error {
 		Organisation   string `json:"organisation"`
 		WebSite        string `json:"website"`
 		Signature      string `json:"signature"`
-		CodeEntreprise uint   `json:"code_entreprise"`
+		CodeEntreprise uint64 `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData
@@ -203,4 +204,59 @@ func DeleteClient(c *fiber.Ctx) error {
 			"data":    nil,
 		},
 	)
+}
+
+func UploadCsvDataClient(c *fiber.Ctx) error {
+	db := database.DB
+
+	type UploadCSV struct {
+		Data           []models.Client `json:"data"`
+		CodeEntreprise uint64          `json:"code_entreprise"`
+		Signature      string          `json:"signature"`
+	}
+
+	var dataUpload UploadCSV
+	if err := json.Unmarshal(c.Body(), &dataUpload); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+
+	var cl models.Client
+
+	for _, client := range dataUpload.Data {
+		cl = models.Client{
+			Fullname:       client.Fullname,
+			Telephone:      client.Telephone,
+			Telephone2:     client.Telephone2,
+			Email:          client.Email,
+			Adress:         client.Adress,
+			Birthday:       client.Birthday,
+			Organisation:   client.Organisation,
+			WebSite:        client.WebSite,
+			Signature:      dataUpload.Signature,
+			CodeEntreprise: dataUpload.CodeEntreprise,
+		}
+		db.Create(&cl)
+	}
+
+	fmt.Println("clients uploaded success")
+
+	return c.JSON(
+		fiber.Map{
+			"status":  "success",
+			"message": "clients uploaded success",
+			// "data":    dataUpload,
+		},
+	)
+}
+
+func GetDataUpload(data map[string]interface{}) ([]string, error) {
+	var dataList []string
+
+	dataStr, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	dataList = append(dataList, string(dataStr))
+
+	return dataList, nil
 }

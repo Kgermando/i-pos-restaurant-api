@@ -85,7 +85,7 @@ func GetPaginatedTableBox(c *fiber.Ctx) error {
 
 	var length int64
 	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).
-	Where("pos_id = ?", posId).Count(&length)
+		Where("pos_id = ?", posId).Count(&length)
 	db.Where("code_entreprise = ?", codeEntreprise).
 		Where("pos_id = ?", posId).
 		Where("name ILIKE ? OR numero::TEXT ILIKE ?", "%"+search+"%", "%"+search+"%").
@@ -94,7 +94,7 @@ func GetPaginatedTableBox(c *fiber.Ctx) error {
 		Order("table_boxes.updated_at DESC").
 		Preload("Commandes").
 		Find(&dataList)
- 
+
 	if err != nil {
 		fmt.Println("error s'est produite: ", err)
 		return c.Status(500).SendString(err.Error())
@@ -189,7 +189,7 @@ func UpdateTableBox(c *fiber.Ctx) error {
 		Numero         int    `json:"numero"`
 		Status         string `json:"status"`
 		Signature      string `json:"signature"`
-		CodeEntreprise uint   `json:"code_entreprise"`
+		CodeEntreprise uint64 `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData

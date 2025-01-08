@@ -16,6 +16,6 @@ type Commande struct {
 	ClientID       uint           `json:"client_id"`
 	Client         Client         `gorm:"foreignKey:ClientID"`
 	Signature      string         `json:"signature"`
-	CodeEntreprise uint           `json:"code_entreprise"`
+	CodeEntreprise uint64         `json:"code_entreprise"`
 	CommandeLines  []CommandeLine `gorm:"foreignKey:CommandeID"`
 }

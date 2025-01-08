@@ -213,7 +213,7 @@ func UpdatePlat(c *fiber.Ctx) error {
 		Tva            float64 `json:"tva"`
 		Signature      string  `json:"signature"`
 		PosID          uint    `json:"pos_id"`
-		CodeEntreprise uint    `json:"code_entreprise"`
+		CodeEntreprise uint64  `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData

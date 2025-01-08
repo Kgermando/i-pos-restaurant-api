@@ -13,7 +13,7 @@ type Livraison struct {
 	PosID          uint    `json:"pos_id"`
 	Status         string  `json:"status"`
 	Signature      string  `json:"signature"`
-	CodeEntreprise uint    `json:"code_entreprise"`
+	CodeEntreprise uint64  `json:"code_entreprise"`
 
 	Client  Client  `gorm:"foreignKey:ClientID"`
 	Livreur Livreur `gorm:"foreignKey:LivreurID"`
@@ -29,4 +29,3 @@ type LivraisonArea struct {
 	Email     string `json:"email"`
 	Count     string `json:"count"`
 }
-

@@ -85,7 +85,7 @@ func GetPaginatedProduct(c *fiber.Ctx) error {
 
 	var length int64
 	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).
-	Where("pos_id = ?", posId).Count(&length)
+		Where("pos_id = ?", posId).Count(&length)
 	db.Where("code_entreprise = ?", codeEntreprise).
 		Where("pos_id = ?", posId).
 		Where("name ILIKE ? OR reference ILIKE ?", "%"+search+"%", "%"+search+"%").
@@ -215,7 +215,7 @@ func UpdateProduct(c *fiber.Ctx) error {
 		Tva            float64 `json:"tva"`
 		Signature      string  `json:"signature"`
 		PosID          uint    `json:"pos_id"`
-		CodeEntreprise uint    `json:"code_entreprise"`
+		CodeEntreprise uint64  `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData

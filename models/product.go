@@ -18,7 +18,7 @@ type Product struct {
 	Signature      string         `json:"signature"`
 	PosID          uint           `json:"pos_id"`
 	Pos            Pos            `gorm:"foreignKey:PosID"`
-	CodeEntreprise uint           `json:"code_entreprise"`
+	CodeEntreprise uint64         `json:"code_entreprise"`
 	Stocks         []Stock        `gorm:"foreignKey:ProductID"`
 	CommadeLines   []CommandeLine `gorm:"foreignKey:ProductID"`
 }

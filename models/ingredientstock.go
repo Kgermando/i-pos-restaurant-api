@@ -20,11 +20,11 @@ type IngredientStock struct {
 	PrixAchat      float64     `gorm:"not null" json:"prix_achat"`
 	DateExpiration time.Time   `gorm:"not null" json:"date_expiration"`
 	Signature      string      `json:"signature"`
-	CodeEntreprise uint        `json:"code_entreprise"`
+	CodeEntreprise uint64      `json:"code_entreprise"`
 }
 
 type IngredientUsage struct {
-	Id             uint  `gorm:"column:id"`
+	Id             uint    `gorm:"column:id"`
 	PlatID         uint    `gorm:"column:plat_id"`
 	IngredientName string  `gorm:"column:name"`
 	Qty            float64 `gorm:"column:qty"`

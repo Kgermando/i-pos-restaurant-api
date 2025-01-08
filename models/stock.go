@@ -20,12 +20,12 @@ type Stock struct {
 	PrixAchat      float64     `gorm:"not null" json:"prix_achat"`
 	DateExpiration time.Time   `gorm:"not null" json:"date_expiration"`
 	Signature      string      `json:"signature"`
-	CodeEntreprise uint        `json:"code_entreprise"`
+	CodeEntreprise uint64      `json:"code_entreprise"`
 }
 
 type FournisseurStock struct {
 	Name           string  `json:"name"`
 	Telephone      string  `json:"telephone"`
 	TypeFourniture string  `json:"type_fourniture"`
-	TotalValue    float64 `json:"total_value"`
+	TotalValue     float64 `json:"total_value"`
 }

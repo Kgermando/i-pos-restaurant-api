@@ -26,7 +26,7 @@ func GetPaginatedFournisseur(c *fiber.Ctx) error {
 
 	search := c.Query("search", "")
 
-	var dataList []models.Fournisseur 
+	var dataList []models.Fournisseur
 	var length int64
 	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).Count(&length)
 	db.Where("code_entreprise = ?", codeEntreprise).
@@ -131,7 +131,7 @@ func UpdateFournisseur(c *fiber.Ctx) error {
 		Email          string `json:"email"`
 		Telephone      string `json:"telephone"`
 		Signature      string `json:"signature"`
-		CodeEntreprise uint   `json:"code_entreprise"`
+		CodeEntreprise uint64 `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData

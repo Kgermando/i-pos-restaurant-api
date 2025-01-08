@@ -34,7 +34,7 @@ func GetPaginatedArea(c *fiber.Ctx) error {
 		Where("name ILIKE ? OR province ILIKE ?", "%"+search+"%", "%"+search+"%").
 		Offset(offset).
 		Limit(limit).
-		Order("areas.updated_at DESC"). 
+		Order("areas.updated_at DESC").
 		Find(&dataList)
 
 	if err != nil {
@@ -126,10 +126,10 @@ func UpdateArea(c *fiber.Ctx) error {
 	db := database.DB
 
 	type UpdateData struct {
-		Name           string      `json:"name"`
-		Province       string      `json:"province"`
-		Signature      string      `json:"signature"`
-		CodeEntreprise uint        `json:"code_entreprise"`
+		Name           string `json:"name"`
+		Province       string `json:"province"`
+		Signature      string `json:"signature"`
+		CodeEntreprise uint64 `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData

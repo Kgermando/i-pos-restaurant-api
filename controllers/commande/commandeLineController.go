@@ -115,7 +115,6 @@ func GetAllCommandeLineByIdLivraison(c *fiber.Ctx) error {
 	})
 }
 
-
 // Get All data
 func GetAllCommandeLines(c *fiber.Ctx) error {
 	db := database.DB
@@ -200,7 +199,7 @@ func UpdateCommandeLine(c *fiber.Ctx) error {
 		LivraisonID    uint   `json:"livraison_id"`
 		ProductID      uint   `json:"product_id"`
 		Quantity       uint64 `json:"quantity"`
-		CodeEntreprise uint   `json:"code_entreprise"`
+		CodeEntreprise uint64 `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData

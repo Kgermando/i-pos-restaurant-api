@@ -238,7 +238,7 @@ func UpdateLivraison(c *fiber.Ctx) error {
 		PosID          uint    `json:"pos_id"`
 		Status         string  `json:"status"`
 		Signature      string  `json:"signature"`
-		CodeEntreprise uint    `json:"code_entreprise"`
+		CodeEntreprise uint64  `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData

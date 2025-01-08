@@ -248,7 +248,7 @@ func UpdateIngredientStock(c *fiber.Ctx) error {
 		PrixAchat      float64   `json:"prix_achat"`
 		DateExpiration time.Time `json:"date_expiration"`
 		Signature      string    `json:"signature"`
-		CodeEntreprise uint      `json:"code_entreprise"`
+		CodeEntreprise uint64    `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData

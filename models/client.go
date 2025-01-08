@@ -17,7 +17,7 @@ type Client struct {
 	WebSite      string `json:"website"`
 
 	Signature      string `json:"signature"`
-	CodeEntreprise uint   `json:"code_entreprise"`
+	CodeEntreprise uint64 `json:"code_entreprise"`
 
 	Livraison []Livraison `gorm:"foreignKey:ClientID"`
 	Commandes []Commande  `gorm:"foreignKey:ClientID"`

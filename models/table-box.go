@@ -13,6 +13,6 @@ type TableBox struct {
 	Numero         int        `gorm:"not null" json:"numero"`
 	Status         string     `json:"status"` // Ouverte et Fermée
 	Signature      string     `json:"signature"`
-	CodeEntreprise uint       `json:"code_entreprise"`
+	CodeEntreprise uint64     `json:"code_entreprise"`
 	Commandes      []Commande `gorm:"foreignKey:TableBoxID"`
 }

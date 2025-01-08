@@ -209,12 +209,12 @@ func UpdateIngredient(c *fiber.Ctx) error {
 	db := database.DB
 
 	type UpdateData struct {
-		Name           string  `json:"name"`
-		Description    string  `json:"description"` 
-		Unite          string  `json:"unite"`
-		PosID          uint    `json:"pos_id"`
-		Signature      string  `json:"signature"`
-		CodeEntreprise uint    `json:"code_entreprise"`
+		Name           string `json:"name"`
+		Description    string `json:"description"`
+		Unite          string `json:"unite"`
+		PosID          uint   `json:"pos_id"`
+		Signature      string `json:"signature"`
+		CodeEntreprise uint64 `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData

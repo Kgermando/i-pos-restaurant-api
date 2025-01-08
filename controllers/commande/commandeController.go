@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/gofiber/fiber/v2"
 	"kgermando/i-pos-restaurant-api/database"
 	"kgermando/i-pos-restaurant-api/models"
+
+	"github.com/gofiber/fiber/v2"
 )
- 
+
 // Paginate
 func GetPaginatedCommandeEntreprise(c *fiber.Ctx) error {
 	db := database.DB
@@ -30,7 +31,7 @@ func GetPaginatedCommandeEntreprise(c *fiber.Ctx) error {
 
 	var length int64
 	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).Count(&length)
-	db.Where("code_entreprise = ?", codeEntreprise). 
+	db.Where("code_entreprise = ?", codeEntreprise).
 		Where("ncommande::TEXT ILIKE ? OR status ILIKE ?", "%"+search+"%", "%"+search+"%").
 		Offset(offset).
 		Limit(limit).
@@ -38,7 +39,6 @@ func GetPaginatedCommandeEntreprise(c *fiber.Ctx) error {
 		Preload("TableBox").
 		Preload("CommandeLines").
 		Find(&dataList)
- 
 
 	if err != nil {
 		fmt.Println("error s'est produite: ", err)
@@ -88,7 +88,7 @@ func GetPaginatedCommandeByTableBox(c *fiber.Ctx) error {
 
 	var length int64
 	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).
-	Where("pos_id = ?", posId).Where("table_box_id = ?", tableBoxId).Count(&length)
+		Where("pos_id = ?", posId).Where("table_box_id = ?", tableBoxId).Count(&length)
 	db.Where("code_entreprise = ?", codeEntreprise).
 		Where("pos_id = ?", posId).
 		Where("table_box_id = ?", tableBoxId).
@@ -144,18 +144,16 @@ func GetAllCommandes(c *fiber.Ctx) error {
 	})
 }
 
-
 func GetTotalCommande(c *fiber.Ctx) error {
 	db := database.DB
-	codeEntreprise := c.Params("code_entreprise") 
+	codeEntreprise := c.Params("code_entreprise")
 	tableBoxId := c.Params("table_box_id")
 
 	var commandes []models.Commande
 	var total int64
 
 	db.Model(commandes).Where("code_entreprise = ?", codeEntreprise).
-	Where("table_box_id = ?", tableBoxId).Count(&total)
-
+		Where("table_box_id = ?", tableBoxId).Count(&total)
 
 	return c.JSON(fiber.Map{
 		"status":  "success",
@@ -164,15 +162,14 @@ func GetTotalCommande(c *fiber.Ctx) error {
 	})
 }
 
-
 // Get one data
 func GetCommande(c *fiber.Ctx) error {
 	id := c.Params("id")
 	db := database.DB
 	var commande models.Commande
 	db.Preload("TableBox").
-	Preload("CommandeLines").
-	Find(&commande, id)
+		Preload("CommandeLines").
+		Find(&commande, id)
 	if commande.Ncommande == 0 {
 		return c.Status(404).JSON(
 			fiber.Map{
@@ -218,10 +215,10 @@ func UpdateCommande(c *fiber.Ctx) error {
 	type UpdateData struct {
 		PosID          uint   `json:"pos_id"`
 		Ncommande      uint64 `json:"ncommande"` // Number Random
-		Status         string `json:"status"`     // Ouverte et Fermée
+		Status         string `json:"status"`    // Ouverte et Fermée
 		ClientID       uint   `json:"client_id"`
 		Signature      string `json:"signature"`
-		CodeEntreprise uint   `json:"code_entreprise"`
+		CodeEntreprise uint64 `json:"code_entreprise"`
 	}
 
 	var updateData UpdateData

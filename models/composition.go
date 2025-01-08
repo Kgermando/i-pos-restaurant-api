@@ -10,9 +10,8 @@ type Composition struct {
 	IngredientID   uint       `json:"ingredient_id"`
 	Quantity       uint64     `gorm:"not null" json:"quantity"`
 	Signature      string     `json:"signature"`
-	CodeEntreprise uint       `json:"code_entreprise"`
+	CodeEntreprise uint64     `json:"code_entreprise"`
 	Plat           Plat       `gorm:"foreignKey:PlatID"`
 	Ingredient     Ingredient `gorm:"foreignKey:IngredientID"`
 	Pos            Pos        `gorm:"foreignKey:PosID"`
 }
- 
