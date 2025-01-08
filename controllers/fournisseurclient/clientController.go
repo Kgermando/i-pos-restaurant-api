@@ -235,6 +235,9 @@ func UploadCsvDataClient(c *fiber.Ctx) error {
 			Signature:      dataUpload.Signature,
 			CodeEntreprise: dataUpload.CodeEntreprise,
 		}
+		if client.Fullname == "" {
+			continue
+		}
 		db.Create(&cl)
 	}
 
