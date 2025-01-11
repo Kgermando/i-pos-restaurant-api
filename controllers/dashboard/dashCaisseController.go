@@ -73,15 +73,15 @@ func GetTotalVentesParJour(c *fiber.Ctx) error {
 	db.Joins("JOIN commandes ON commande_lines.commande_id = commandes.id").
 	Where("commande_lines.code_entreprise = ?", codeEntreprise).
 	Where("commande_lines.created_at BETWEEN ? AND ?", startOfDay, endOfDay).
-	Where("commandes.status != ?", "En cours").
+	Where("commandes.status != ? OR commandes.status != ?", "En cours", "Créance").
 	Preload("Plat").
 	Preload("Product").
 	Find(&commandeLines)
 
 	db.Joins("JOIN livraisons ON commande_lines.livraison_id = livraisons.id").
 	Where("commande_lines.code_entreprise = ?", codeEntreprise).
-	Where("commande_lines.created_at BETWEEN ? AND ?", startOfDay, endOfDay).
-	Where("livraisons.status != ?", "En cours").
+	Where("commande_lines.created_at BETWEEN ? AND ?", startOfDay, endOfDay). 
+	Where("livraisons.status != ? OR livraisons.status != ?", "En cours", "Créance").
 	Preload("Plat").
 	Preload("Product").
 	Find(&commandeLineLivraisons)
@@ -278,12 +278,12 @@ func GetTotalParCaisse(c *fiber.Ctx) error {
 			c.name,
 			SUM(CASE WHEN ci.type_transaction = 'Entrée' THEN ci.montant ELSE 0 END) AS total_entrees,
 			SUM(CASE WHEN ci.type_transaction = 'Sortie' THEN ci.montant ELSE 0 END) AS total_sorties,
-			SUM(CASE WHEN ci.type_transaction = 'Entrée' THEN ci.montant ELSE 0 END) - 
 			SUM(CASE WHEN ci.type_transaction = 'Sortie' THEN ci.montant ELSE 0 END) AS solde
 		FROM
 			caisses c
 		JOIN
 			caisse_items ci ON c.id = ci.caisse_id
+		WHERE ci.code_entreprise = ? AND ci.created_at BETWEEN ? AND ?
 		GROUP BY
 			c.id, c.name;
 	`
