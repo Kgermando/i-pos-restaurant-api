@@ -1,127 +1,73 @@
 package finance
 
 import (
-	"fmt"
 	"kgermando/i-pos-restaurant-api/database"
 	"kgermando/i-pos-restaurant-api/models"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-// Paginate
-func GetPaginatedCaisseEntreprise(c *fiber.Ctx) error {
+// Get All data
+func GetTotalAllCaisses(c *fiber.Ctx) error {
 	db := database.DB
-	codeEntreprise := c.Params("code_entreprise")
+	codeEntreprise := c.Params("code_entreprise") 
 
-	page, err := strconv.Atoi(c.Query("page", "1"))
-	if err != nil || page <= 0 {
-		page = 1 // Default page number
-	}
-	limit, err := strconv.Atoi(c.Query("limit", "15"))
-	if err != nil || limit <= 0 {
-		limit = 15
-	}
-	offset := (page - 1) * limit
+	var dataList []models.CaisseItem
+	db.Where("code_entreprise = ?", codeEntreprise).Find(&dataList)
 
-	search := c.Query("search", "")
+	var total float64 = 0
+	var totalEntree float64 = 0
+	var totalSortie float64 = 0
+	var solde float64 = 0
+	var pourcent float64 = 0
 
-	var dataList []models.Caisse
-
-	var length int64
-	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).Count(&length)
-	db.Where("code_entreprise = ?", codeEntreprise).
-		Where("libelle ILIKE ? OR type_transaction ILIKE ? OR reference ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%").
-		Offset(offset).
-		Limit(limit).
-		Order("caisses.updated_at DESC").
-		Preload("Pos").
-		Find(&dataList)
-
-	if err != nil {
-		fmt.Println("error s'est produite: ", err)
-		return c.Status(500).SendString(err.Error())
+	for _, item := range dataList {
+		if item.TypeTransaction == "Entrée" {
+			totalEntree += item.Montant
+		}
+		if item.TypeTransaction == "Sortie" {
+			totalSortie += item.Montant
+		}
 	}
 
-	// Calculate total number of pages
-	totalPages := len(dataList) / limit
-	if remainder := len(dataList) % limit; remainder > 0 {
-		totalPages++
-	}
-	pagination := map[string]interface{}{
-		"total_pages": totalPages,
-		"page":        page,
-		"page_size":   limit,
-		"length":      length,
+	total = totalEntree + totalSortie
+	solde = totalEntree - totalSortie
+	pourcent = solde * 100 / (totalEntree + totalSortie)
+
+	response := map[string]interface{}{
+		"total": total,
+		"totalentree": totalEntree,
+		"totalsortie": totalSortie,
+		"solde":       solde,
+		"pourcent":    pourcent,
 	}
 
 	return c.JSON(fiber.Map{
-		"status":     "success",
-		"message":    "All caisses",
-		"data":       dataList,
-		"pagination": pagination,
-	})
-}
-
-// Paginate
-func GetPaginatedCaisse(c *fiber.Ctx) error {
-	db := database.DB
-	codeEntreprise := c.Params("code_entreprise")
-	posId := c.Params("pos_id")
-
-	page, err := strconv.Atoi(c.Query("page", "1"))
-	if err != nil || page <= 0 {
-		page = 1 // Default page number
-	}
-	limit, err := strconv.Atoi(c.Query("limit", "15"))
-	if err != nil || limit <= 0 {
-		limit = 15
-	}
-	offset := (page - 1) * limit
-
-	search := c.Query("search", "")
-
-	var dataList []models.Caisse
-
-	var length int64
-	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).
-		Where("pos_id = ?", posId).Count(&length)
-	db.Where("code_entreprise = ?", codeEntreprise).
-		Where("pos_id = ?", posId).
-		Where("libelle ILIKE ? OR type_transaction ILIKE ? OR reference ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%").
-		Offset(offset).
-		Limit(limit).
-		Order("caisses.updated_at DESC").
-		Preload("Pos").
-		Find(&dataList)
-
-	if err != nil {
-		fmt.Println("error s'est produite: ", err)
-		return c.Status(500).SendString(err.Error())
-	}
-
-	// Calculate total number of pages
-	totalPages := len(dataList) / limit
-	if remainder := len(dataList) % limit; remainder > 0 {
-		totalPages++
-	}
-	pagination := map[string]interface{}{
-		"total_pages": totalPages,
-		"page":        page,
-		"page_size":   limit,
-		"length":      length,
-	}
-
-	return c.JSON(fiber.Map{
-		"status":     "success",
-		"message":    "All caisses",
-		"data":       dataList,
-		"pagination": pagination,
+		"status":  "success",
+		"message": "Total All caisses",
+		"data":    response,
 	})
 }
 
 // Get All data
 func GetAllCaisses(c *fiber.Ctx) error {
+	db := database.DB
+	codeEntreprise := c.Params("code_entreprise")
+
+	var data []models.Caisse
+	db.Where("code_entreprise = ?", codeEntreprise).
+		Preload("Pos").
+		Order("caisses.updated_at ASC").
+		Find(&data)
+	return c.JSON(fiber.Map{
+		"status":  "success",
+		"message": "All caisses",
+		"data":    data,
+	})
+}
+
+// Get All data
+func GetAllCaisseByPos(c *fiber.Ctx) error {
 	db := database.DB
 	codeEntreprise := c.Params("code_entreprise")
 	posId := c.Params("pos_id")
@@ -130,6 +76,7 @@ func GetAllCaisses(c *fiber.Ctx) error {
 	db.Where("code_entreprise = ?", codeEntreprise).
 		Where("pos_id = ?", posId).
 		Preload("Pos").
+		Order("caisses.updated_at ASC").
 		Find(&data)
 	return c.JSON(fiber.Map{
 		"status":  "success",
@@ -149,7 +96,7 @@ func GetAllCaisseBySearch(c *fiber.Ctx) error {
 	var data []models.Caisse
 	db.Where("code_entreprise = ?", codeEntreprise).
 		Where("pos_id = ?", posId).
-		Where("libelle ILIKE ? OR type_transaction ILIKE ? OR reference ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%").
+		Where("name ILIKE ?", "%"+search+"%").
 		Find(&data)
 	return c.JSON(fiber.Map{
 		"status":  "success",
@@ -164,8 +111,10 @@ func GetCaisse(c *fiber.Ctx) error {
 	db := database.DB
 
 	var caisse models.Caisse
-	db.Find(&caisse, id)
-	if caisse.TypeTransaction == "" {
+	db.
+		Preload("Pos").
+		Find(&caisse, id)
+	if caisse.Name == "" {
 		return c.Status(404).JSON(
 			fiber.Map{
 				"status":  "error",
@@ -208,13 +157,10 @@ func UpdateCaisse(c *fiber.Ctx) error {
 	db := database.DB
 
 	type UpdateData struct {
-		TypeTransaction string  `json:"type_transaction"` // Entreé ou Sortie
-		Montant         float64 `json:"montant"`          // Montant de la transaction
-		Libelle         string  `json:"libelle"`          // Description de la transaction
-		Reference       string  `json:"reference"`        // Nombre aleatoire
-		Signature       string  `json:"signature"`        // Signature de la transaction
-		PosID           uint    `json:"pos_id"`           // ID du point de vente
-		CodeEntreprise  uint    `json:"code_entreprise"`
+		Name           string `gorm:"not null" json:"name"` // Nom de la caisse
+		Signature      string `json:"signature"`            // Signature de la transaction
+		PosID          uint   `json:"pos_id"`               // ID du point de vente
+		CodeEntreprise uint64 `json:"code_entreprise"`      // ID de l'entreprise
 	}
 
 	var updateData UpdateData
@@ -232,10 +178,7 @@ func UpdateCaisse(c *fiber.Ctx) error {
 	caisse := new(models.Caisse)
 
 	db.First(&caisse, id)
-	caisse.TypeTransaction = updateData.TypeTransaction
-	caisse.Montant = updateData.Montant
-	caisse.Libelle = updateData.Libelle
-	caisse.Reference = updateData.Reference
+	caisse.Name = updateData.Name
 	caisse.Signature = updateData.Signature
 	caisse.PosID = updateData.PosID
 	caisse.CodeEntreprise = updateData.CodeEntreprise
@@ -260,7 +203,7 @@ func DeleteCaisse(c *fiber.Ctx) error {
 
 	var caisse models.Caisse
 	db.First(&caisse, id)
-	if caisse.TypeTransaction == "" {
+	if caisse.Name == "" {
 		return c.Status(404).JSON(
 			fiber.Map{
 				"status":  "error",

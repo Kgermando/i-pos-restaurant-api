@@ -230,14 +230,23 @@ func Setup(app *fiber.App) {
 	ctc.Delete("/delete/:id", contact.DeleteContact)
 
 	// Finance controller
-	cais := api.Group("/caisses")
-	cais.Get("/:code_entreprise/all/paginate", finance.GetPaginatedCaisseEntreprise)
-	cais.Get("/:code_entreprise/:pos_id/all/paginate", finance.GetPaginatedCaisse)
-	cais.Get("/:code_entreprise/:pos_id/all", finance.GetAllCaisses)
+	cais := api.Group("/caisses") 
+	cais.Get("/:code_entreprise/all/total", finance.GetTotalAllCaisses)
+	cais.Get("/:code_entreprise/all", finance.GetAllCaisses)
+	cais.Get("/:code_entreprise/:pos_id/all", finance.GetAllCaisseByPos)
 	cais.Get("/get/:id", finance.GetCaisse)
 	cais.Post("/create", finance.CreateCaisse)
 	cais.Put("/update/:id", finance.UpdateCaisse)
 	cais.Delete("/delete/:id", finance.DeleteCaisse)
+
+	// Caisse item Controller
+	caisseItem := api.Group("/caisse-items") 
+	caisseItem.Get("/:code_entreprise/:caisse_id/all/paginate", finance.GetPaginatedCaisseItems)
+	caisseItem.Get("/:code_entreprise/:caisse_id/all", finance.GetAllCaisseItems)
+	caisseItem.Get("/get/:id", finance.GetCaisseItem)
+	caisseItem.Post("/create", finance.CreateCaisseItem)
+	caisseItem.Put("/update/:id", finance.UpdateCaisseItem)
+	caisseItem.Delete("/delete/:id", finance.DeleteCaisseItem)
 
 	// Dashboard controller
 	dash := api.Group("/dashboard")
@@ -268,6 +277,7 @@ func Setup(app *fiber.App) {
 	dash.Get("/:code_entreprise/caisses/total-ventes-journalieres", dashboard.GetTotalVentesParJour)
 	dash.Get("/:code_entreprise/caisses/courbe-ventes-profits", dashboard.GetCourbeVenteProfit24h)
 	dash.Get("/:code_entreprise/caisses/tableau-entrees-sorties", dashboard.GetTableauEntreeSorties)
+	dash.Get("/:code_entreprise/caisses/total-par-caisse", dashboard.GetTotalParCaisse)
 
 	// Dash Client Fournisseur et Livraison
 	dash.Get("/:code_entreprise/cl-fseur-liv/total", dashboard.GetTotalClientFournisseur)

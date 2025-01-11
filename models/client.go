@@ -12,7 +12,7 @@ type Client struct {
 	Telephone2   string `json:"telephone2"`
 	Email        string `json:"email"`
 	Adress       string `json:"adress"`
-	Birthday     string `json:"birthday"`
+	// Birthday     string `json:"birthday"`
 	Organisation string `json:"organisation"`
 	WebSite      string `json:"website"`
 

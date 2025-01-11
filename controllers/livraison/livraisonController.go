@@ -14,6 +14,9 @@ func GetPaginatedLivraisonEntreprise(c *fiber.Ctx) error {
 	db := database.DB
 	codeEntreprise := c.Params("code_entreprise")
 
+	start_date := c.Query("start_date")
+	end_date := c.Query("end_date")
+
 	page, err := strconv.Atoi(c.Query("page", "1"))
 	if err != nil || page <= 0 {
 		page = 1 // Default page number
@@ -29,11 +32,14 @@ func GetPaginatedLivraisonEntreprise(c *fiber.Ctx) error {
 	var dataList []models.Livraison
 
 	var length int64
-	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).Count(&length)
+	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).
+	Where("caisse_items.created_at BETWEEN ? AND ?", start_date, end_date).
+	Count(&length)
 	db.Joins("JOIN clients ON livraisons.client_id = clients.id").
 		Joins("JOIN livreurs ON livraisons.livreur_id = livreurs.id").
 		Joins("JOIN areas ON livraisons.area_id = areas.id").
 		Where("livraisons.code_entreprise = ?", codeEntreprise).
+		Where("caisse_items.created_at BETWEEN ? AND ?", start_date, end_date).
 		Where("livreurs.name_society ILIKE ? OR livreurs.livreur_name ILIKE ? OR operator_name ILIKE ? OR clients.fullname ILIKE ? OR areas.name ILIKE ? OR livraisons.status ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%").
 		Offset(offset).
 		Limit(limit).
@@ -73,7 +79,10 @@ func GetPaginatedLivraisonEntreprise(c *fiber.Ctx) error {
 func GetPaginatedLivraison(c *fiber.Ctx) error {
 	db := database.DB
 	codeEntreprise := c.Params("code_entreprise")
-	posId := c.Params("pos_id")
+	posId := c.Params("pos_id") 
+
+	start_date := c.Query("start_date")
+	end_date := c.Query("end_date")
 
 	page, err := strconv.Atoi(c.Query("page", "1"))
 	if err != nil || page <= 0 {
@@ -91,12 +100,14 @@ func GetPaginatedLivraison(c *fiber.Ctx) error {
 
 	var length int64
 	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).
-		Where("pos_id = ?", posId).Count(&length)
+		Where("pos_id = ?", posId).
+		Where("caisse_items.created_at BETWEEN ? AND ?", start_date, end_date).Count(&length)
 	db.Joins("JOIN clients ON livraisons.client_id = clients.id").
 		Joins("JOIN livreurs ON livraisons.livreur_id = livreurs.id").
 		Joins("JOIN areas ON livraisons.area_id = areas.id").
 		Where("livraisons.code_entreprise = ?", codeEntreprise).
 		Where("livraisons.pos_id = ?", posId).
+		Where("caisse_items.created_at BETWEEN ? AND ?", start_date, end_date).
 		Where("livreurs.name_society ILIKE ? OR livreurs.livreur_name ILIKE ? OR operator_name ILIKE ? OR clients.fullname ILIKE ? OR areas.name ILIKE ? OR livraisons.status ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%").
 		Offset(offset).
 		Limit(limit).

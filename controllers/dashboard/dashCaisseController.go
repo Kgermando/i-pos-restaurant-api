@@ -18,15 +18,15 @@ func GetTotalCaisse(c *fiber.Ctx) error {
 	endDateStr := c.Query("end_date")
 
 	// Total des caisses entrees
-	var caisseEntrees []models.Caisse
-	db.Where("caisses.code_entreprise = ?", codeEntreprise).
+	var caisseEntrees []models.CaisseItem
+	db.Where("caisse_items.code_entreprise = ?", codeEntreprise).
 	Where("created_at BETWEEN ? AND ?", startDateStr, endDateStr).
 	Where("type_transaction = ?", "Entrée").
 	Find(&caisseEntrees)
 
 	// Calcul du total des caisses sorties
-	var caisseSorties []models.Caisse
-	db.Where("caisses.code_entreprise = ?", codeEntreprise).
+	var caisseSorties []models.CaisseItem
+	db.Where("caisse_items.code_entreprise = ?", codeEntreprise).
 	Where("created_at BETWEEN ? AND ?", startDateStr, endDateStr).
 	Where("type_transaction = ?", "Sortie").
 	Find(&caisseSorties)
@@ -62,18 +62,32 @@ func GetTotalCaisse(c *fiber.Ctx) error {
 
 
 // Total des ventes journaileres
-func GetTotalVentesParJour(c *fiber.Ctx) error {
+func GetTotalVentesParJour(c *fiber.Ctx) error {  
 	db := database.DB
 	codeEntreprise := c.Params("code_entreprise") 
-
+ 
 	var commandeLines []models.CommandeLine
+	var commandeLineLivraisons []models.CommandeLine
 	startOfDay := time.Now().Truncate(24 * time.Hour)
 	endOfDay := startOfDay.Add(24 * time.Hour).Add(-1 * time.Second)
-	db.Where("commande_lines.code_entreprise = ?", codeEntreprise).
-	Where("created_at BETWEEN ? AND ?", startOfDay, endOfDay).
+	db.Joins("JOIN commandes ON commande_lines.commande_id = commandes.id").
+	Where("commande_lines.code_entreprise = ?", codeEntreprise).
+	Where("commande_lines.created_at BETWEEN ? AND ?", startOfDay, endOfDay).
+	Where("commandes.status != ?", "En cours").
 	Preload("Plat").
 	Preload("Product").
 	Find(&commandeLines)
+
+	db.Joins("JOIN livraisons ON commande_lines.livraison_id = livraisons.id").
+	Where("commande_lines.code_entreprise = ?", codeEntreprise).
+	Where("commande_lines.created_at BETWEEN ? AND ?", startOfDay, endOfDay).
+	Where("livraisons.status != ?", "En cours").
+	Preload("Plat").
+	Preload("Product").
+	Find(&commandeLineLivraisons)
+
+	commandeLines = append(commandeLines, commandeLineLivraisons...)
+
 
 	ingredientUsages, err := GetTotalIngredientUsage(db, codeEntreprise)
 	if err != nil {
@@ -127,11 +141,23 @@ func GetCourbeVenteProfit24h(c *fiber.Ctx) error {
 
 
 	var commandeLines []models.CommandeLine
-	db.Where("commande_lines.code_entreprise = ?", codeEntreprise).
-	Where("date(created_at) = date('now')").
+	var commandeLineLivraisons []models.CommandeLine
+	db.Joins("JOIN commandes ON commande_lines.commande_id = commandes.id").
+	Where("commande_lines.code_entreprise = ?", codeEntreprise).
+	Where("commandes.status != ?","En cours").
+	Where("date(commande_lines.created_at) = date('now')").
 	Preload("Plat").
 	Preload("Product").
 	Find(&commandeLines)
+	db.Joins("JOIN livraisons ON commande_lines.livraison_id = livraisons.id").
+	Where("commande_lines.code_entreprise = ?", codeEntreprise).
+	Where("livraisons.status != ?", "En cours").
+	Where("date(commande_lines.created_at) = date('now')").
+	Preload("Plat").
+	Preload("Product").
+	Find(&commandeLineLivraisons)
+
+	commandeLines = append(commandeLines, commandeLineLivraisons...)
 
 	ingredientUsages, err := GetTotalIngredientUsage(db, codeEntreprise)
 	if err != nil {
@@ -201,7 +227,7 @@ func GetTableauEntreeSorties(c *fiber.Ctx) error {
 	}
 	offset := (page - 1) * limit 
 
-	var dataList []models.Caisse
+	var dataList []models.CaisseItem
 
 	var length int64
 	db.Model(dataList).Where("code_entreprise = ?", codeEntreprise).Count(&length)
@@ -209,8 +235,8 @@ func GetTableauEntreeSorties(c *fiber.Ctx) error {
 		Where("created_at BETWEEN ? AND ?", startDateStr, endDateStr).
 		Offset(offset).
 		Limit(limit).
-		Order("caisses.updated_at DESC").
-		Preload("Pos").
+		Order("caisse_items.updated_at DESC").
+		Preload("Caisse.Pos").
 		Find(&dataList)
 
 	if err != nil {
@@ -238,3 +264,38 @@ func GetTableauEntreeSorties(c *fiber.Ctx) error {
 	})
 }
 
+func GetTotalParCaisse(c *fiber.Ctx) error { 
+	db := database.DB
+	codeEntreprise := c.Params("code_entreprise") 
+	startDateStr := c.Query("start_date")
+	endDateStr := c.Query("end_date")
+
+	var dashCaisse models.CaisseDashboard
+ 
+	query := `
+		SELECT
+    		c.id,
+			c.name,
+			SUM(CASE WHEN ci.type_transaction = 'Entrée' THEN ci.montant ELSE 0 END) AS total_entrees,
+			SUM(CASE WHEN ci.type_transaction = 'Sortie' THEN ci.montant ELSE 0 END) AS total_sorties,
+			SUM(CASE WHEN ci.type_transaction = 'Entrée' THEN ci.montant ELSE 0 END) - 
+			SUM(CASE WHEN ci.type_transaction = 'Sortie' THEN ci.montant ELSE 0 END) AS solde
+		FROM
+			caisses c
+		JOIN
+			caisse_items ci ON c.id = ci.caisse_id
+		GROUP BY
+			c.id, c.name;
+	`
+
+	if err := db.Raw(query, codeEntreprise, startDateStr, endDateStr).
+		Scan(&dashCaisse).Error; err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{
+		"status":     "success",
+		"message":    "Total ParCaisse",
+		"data":       "dataList", 
+	})
+}

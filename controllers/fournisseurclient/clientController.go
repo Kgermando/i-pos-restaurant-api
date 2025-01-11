@@ -132,7 +132,7 @@ func UpdateClient(c *fiber.Ctx) error {
 		Telephone2     string `json:"telephone2"`
 		Email          string `json:"email"`
 		Adress         string `json:"adress"`
-		Birthday       string `json:"birthday"`
+		// Birthday       string `json:"birthday"`
 		Organisation   string `json:"organisation"`
 		WebSite        string `json:"website"`
 		Signature      string `json:"signature"`
@@ -159,7 +159,7 @@ func UpdateClient(c *fiber.Ctx) error {
 	client.Telephone2 = updateData.Telephone2
 	client.Email = updateData.Email
 	client.Adress = updateData.Adress
-	client.Birthday = updateData.Birthday
+	// client.Birthday = updateData.Birthday
 	client.Organisation = updateData.Organisation
 	client.WebSite = updateData.WebSite
 	client.Signature = updateData.Signature
@@ -229,7 +229,7 @@ func UploadCsvDataClient(c *fiber.Ctx) error {
 			Telephone2:     client.Telephone2,
 			Email:          client.Email,
 			Adress:         client.Adress,
-			Birthday:       client.Birthday,
+			// Birthday:       client.Birthday,
 			Organisation:   client.Organisation,
 			WebSite:        client.WebSite,
 			Signature:      dataUpload.Signature,
