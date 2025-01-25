@@ -16,7 +16,7 @@ import (
 	"kgermando/i-pos-restaurant-api/controllers/stock"
 	"kgermando/i-pos-restaurant-api/controllers/tablebox"
 	"kgermando/i-pos-restaurant-api/controllers/users"
-	"kgermando/i-pos-restaurant-api/middlewares"
+	// "kgermando/i-pos-restaurant-api/middlewares"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -35,7 +35,7 @@ func Setup(app *fiber.App) {
 
 	au.Post("/entreprise", entreprise.CreateEntreprise)
 
-	app.Use(middlewares.IsAuthenticated)
+	// app.Use(middlewares.IsAuthenticated)
 
 	au.Get("/user", auth.AuthUser)
 	au.Put("/profil/info", auth.UpdateInfo)

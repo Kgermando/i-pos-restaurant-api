@@ -41,9 +41,9 @@ func main() {
 
 	// Middleware
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "https://pos-restaurant.up.railway.app, http://localhost:4200" ,
+		AllowOrigins:   "*", // "https://pos-restaurant.up.railway.app, http://localhost:4200" ,
 		AllowHeaders:     "Origin, Content-Type, Accept",
-		AllowCredentials: true,
+		AllowCredentials: false,
 		AllowMethods: strings.Join([]string{
 			fiber.MethodGet,
 			fiber.MethodPost,
