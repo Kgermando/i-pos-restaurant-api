@@ -175,7 +175,7 @@ func UpdateEntreprise(c *fiber.Ctx) error {
 	}
 
 	entreprise := new(models.Entreprise)
-
+ 
 	db.First(&entreprise, id)
 	entreprise.TypeEntreprise = updateData.TypeEntreprise
 	entreprise.Name = updateData.Name
