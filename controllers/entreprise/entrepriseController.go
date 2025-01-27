@@ -182,7 +182,7 @@ func UpdateEntreprise(c *fiber.Ctx) error {
 	entreprise.Code = updateData.Code
 	entreprise.Rccm = updateData.Rccm
 	entreprise.IdNat = updateData.IdNat
-	entreprise.NImpot =  updateData.NImpot,
+	entreprise.NImpot =  updateData.NImpot
 	entreprise.Adresse =  updateData.Adresse
 	entreprise.Email = updateData.Email
 	entreprise.Telephone = updateData.Telephone
