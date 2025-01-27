@@ -58,6 +58,8 @@ func GetPaginatedEntreprise(c *fiber.Ctx) error {
 			Code:           entreprise.Code,
 			Rccm:           entreprise.Rccm,
 			IdNat:          entreprise.IdNat,
+			NImpot:  entreprise.NImpot,
+			Adresse:  entreprise.Adresse,
 			Email:          entreprise.Email,
 			Telephone:      entreprise.Telephone,
 			Manager:        entreprise.Manager,
@@ -150,11 +152,12 @@ func UpdateEntreprise(c *fiber.Ctx) error {
 		Code           string `json:"code"` // Code entreprise
 		Rccm           string `json:"rccm"`
 		IdNat          string `json:"idnat"`
+		NImpot         string `json:"nimpot"`
+		Adresse        string `json:"adresse"`
 		Email          string `json:"email"`     // Email officiel
 		Telephone      string `json:"telephone"` // Telephone officiel
 		Manager        string `json:"manager"`
-		Status         bool   `json:"status"`
-		// TotalCompte    uint64    `json:"total_compte"`
+		Status         bool   `json:"status"` 
 		Abonnement time.Time `json:"abonnement"`
 		Signature  string    `json:"signature"`
 	}
@@ -179,11 +182,12 @@ func UpdateEntreprise(c *fiber.Ctx) error {
 	entreprise.Code = updateData.Code
 	entreprise.Rccm = updateData.Rccm
 	entreprise.IdNat = updateData.IdNat
+	entreprise.NImpot =  updateData.NImpot,
+	entreprise.Adresse =  updateData.Adresse
 	entreprise.Email = updateData.Email
 	entreprise.Telephone = updateData.Telephone
 	entreprise.Manager = updateData.Manager
 	entreprise.Status = updateData.Status
-	// entreprise.TotalCompte = updateData.TotalCompte
 	entreprise.Abonnement = updateData.Abonnement
 	entreprise.Signature = updateData.Signature
 

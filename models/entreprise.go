@@ -9,13 +9,14 @@ import (
 
 type Entreprise struct {
 	gorm.Model
-
-	// ID             uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
+ 
 	TypeEntreprise string    `gorm:"not null" json:"type_entreprise"` // PME, GE, Particulier
 	Name           string    `gorm:"not null" json:"name"`
 	Code           string    `gorm:"not null" json:"code"` // Code entreprise
 	Rccm           string    `json:"rccm"`
 	IdNat          string    `json:"idnat"`
+	NImpot         string    `json:"nimpot"`
+	Adresse        string    `json:"adresse"`
 	Email          string    `json:"email"`                     // Email officiel
 	Telephone      string    `gorm:"not null" json:"telephone"` // Telephone officiel
 	Manager        string    `gorm:"not null" json:"manager"`
@@ -27,14 +28,15 @@ type Entreprise struct {
     
 }
 
-type EntrepriseInfos struct {
-	// ID             uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
+type EntrepriseInfos struct { 
 	ID             uint      `json:"id"`
 	TypeEntreprise string    `json:"type_entreprise"` // PME, GE, Particulier
 	Name           string    `json:"name"`
 	Code           string    `json:"code"` // Code entreprise
 	Rccm           string    `json:"rccm"`
 	IdNat          string    `json:"idnat"`
+	NImpot         string    `json:"nimpot"`
+	Adresse        string    `json:"adresse"`
 	Email          string    `json:"email"`     // Email officiel
 	Telephone      string    `json:"telephone"` // Telephone officiel
 	Manager        string    `json:"manager"`
