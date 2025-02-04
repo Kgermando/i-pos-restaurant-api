@@ -103,14 +103,16 @@ func GetTotalStock(c *fiber.Ctx) error {
 // Get All data
 func GetAllStocks(c *fiber.Ctx) error {
 	db := database.DB
+	productId := c.Params("product_id")
 	var data []models.Stock
-	db.Find(&data)
+	db.Where("product_id = ?", productId).Find(&data)
 	return c.JSON(fiber.Map{
 		"status":  "success",
 		"message": "All stocks",
 		"data":    data,
 	})
 }
+
 
 // Get one data
 func GetStock(c *fiber.Ctx) error {

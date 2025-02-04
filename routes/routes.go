@@ -96,7 +96,7 @@ func Setup(app *fiber.App) {
 
 	// Stock controller
 	s := api.Group("/stocks")
-	s.Get("/all", stock.GetAllStocks)
+	s.Get("/all/:product_id", stock.GetAllStocks)
 	s.Get("/all/paginate/:product_id", stock.GetPaginatedStock)
 	s.Get("/all/total/:product_id", stock.GetTotalStock)
 	s.Get("/all/get/:product_id", stock.GetStockMargeBeneficiaire)
